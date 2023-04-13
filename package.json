@@ -4,7 +4,8 @@
   "description": "Question and Answer backend server and database",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "server-dev": "nodemon ./index.js"
   },
   "repository": {
     "type": "git",
