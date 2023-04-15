@@ -1,31 +1,34 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const dataModelSchema = new mongoose.Schema(
+mongoose.connect('mongodb://localhost/qanda');
+
+const dataModelSchema = new Schema(
   [
     {
-      productID: NUMBER,
+      productID: Number,
       questions: [
         {
-          questionID: {type: NUMBER, required: 'true'},
-          questionBody: STRING,
-          date: DATE.now,
-          askerName: STRING,
-          helpfulness: {type: NUMBER, default: 0},
-          reported: {type: BOOLEAN, default: 'false'},
-          email: STRING,
+          questionID: {type: Number, required: true},
+          questionBody: String,
+          date: Date.now,
+          askerName: String,
+          helpfulness: {type: Number, default: 0},
+          reported: {type: Boolean, default: false},
+          email: String,
           answers: [
             {
-              answerID: {type: NUMBER, required: 'true'},
-              answerBody: STRING,
+              answerID: {type: Number, required: true},
+              answerBody: String,
               date: DATE.now,
-              answerName: STRING,
-              helpfulness: {type: NUMBER, default: 0},
-              reported: {type: BOOLEAN, default: 'false'},
-              email: STRING,
+              answerName: String,
+              helpfulness: {type: Number, default: 0},
+              reported: {type: Boolean, default: false},
+              email: String,
               photos: [
                 {
-                  photoID: {type: NUMBER, required: 'true'},
-                  url: STRING
+                  photoID: {type: Number, required: true},
+                  url: String
                 }
               ]
             }

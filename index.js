@@ -3,7 +3,7 @@ const path = require('path');
 const port = 3001;
 
 const App = express();
-express.json();
+App.use(express.json());
 
 App.get('/', (req, res) => {
   res.send('sup');
