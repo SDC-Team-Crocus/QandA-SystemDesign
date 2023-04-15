@@ -11,7 +11,7 @@ const dataModelSchema = new Schema(
         {
           questionID: {type: Number, required: true},
           questionBody: String,
-          date: Date.now,
+          date: {type: Date, default: Date.now},
           askerName: String,
           helpfulness: {type: Number, default: 0},
           reported: {type: Boolean, default: false},
@@ -20,7 +20,7 @@ const dataModelSchema = new Schema(
             {
               answerID: {type: Number, required: true},
               answerBody: String,
-              date: DATE.now,
+              date: {type: Date, default: Date.now},
               answerName: String,
               helpfulness: {type: Number, default: 0},
               reported: {type: Boolean, default: false},
