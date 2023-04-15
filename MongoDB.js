@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const dataModelSchema = new mongoose.Schema({
+const dataModelSchema = new mongoose.Schema(
   [
     {
       productID: NUMBER,
       questions: [
         {
-          questionID: NUMBER,
+          questionID: {type: NUMBER, required: 'true'},
           questionBody: STRING,
           date: DATE.now,
           askerName: STRING,
@@ -15,7 +15,7 @@ const dataModelSchema = new mongoose.Schema({
           email: STRING,
           answers: [
             {
-              answerID: NUMBER,
+              answerID: {type: NUMBER, required: 'true'},
               answerBody: STRING,
               date: DATE.now,
               answerName: STRING,
@@ -24,7 +24,7 @@ const dataModelSchema = new mongoose.Schema({
               email: STRING,
               photos: [
                 {
-                  photoID: NUMBER,
+                  photoID: {type: NUMBER, required: 'true'},
                   url: STRING
                 }
               ]
@@ -33,7 +33,7 @@ const dataModelSchema = new mongoose.Schema({
         }
       ]
     }
-  ]
-});
+  ]);
 
-export const dataModel = mongoose.model('dataModel', dataModelSchema);
+const dataModel = mongoose.model('dataModel', dataModelSchema);
+export default dataModel;
