@@ -9,6 +9,8 @@ App.get('/', (req, res) => {
   res.send('sup');
 });
 
+App.get('/questions')
+
 App.listen(port, () => {
   console.log(`Listening to port: ${port}`);
 });
