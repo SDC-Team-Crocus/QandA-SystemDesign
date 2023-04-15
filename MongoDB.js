@@ -3,9 +3,7 @@ const { Schema } = mongoose;
 
 mongoose.connect('mongodb://localhost/qanda');
 
-const dataModelSchema = new Schema(
-  [
-    {
+const dataModelSchema = new Schema({
       productID: Number,
       questions: [
         {
@@ -35,8 +33,7 @@ const dataModelSchema = new Schema(
           ]
         }
       ]
-    }
-  ]);
+    });
 
 const dataModel = mongoose.model('dataModel', dataModelSchema);
 export default dataModel;
