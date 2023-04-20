@@ -40,9 +40,8 @@ CREATE TABLE IF NOT EXISTS Photos(
   AnswerID INTEGER REFERENCES Answers(AnswerID)
 );
 
-  -- CONSTRAINT fk_QuestionID
-  --   FOREIGN KEY (QuestionID)
-  --   REFERENCES Questions(QuestionID)
+
+  -- TRANSFERRING DATA INTO DESIGNED SCHEMA --
 
   -- INSERT INTO Questions (QuestionID, QuestionBody, CurrentDate, Helpfulness, Reported, UserID, ProductID)
   -- SELECT id, body, date, helpful, reported, (SELECT UserID FROM Users WHERE Users.UserName = questionData.asker_name) AS UserID, product_id FROM questionData;
@@ -52,3 +51,10 @@ CREATE TABLE IF NOT EXISTS Photos(
 
   -- INSERT INTO Photos (PhotoID, PhotoURL, AnswerID)
   -- SELECT id, url, (SELECT AnswerID FROM Answers WHERE Answers.AnswerID = photosData.answer_id) AS AnswerID FROM photosData;
+
+  -- CREATING INDICES FOR TABLES --
+  -- CREATE INDEX productid_idx ON Questions(ProductID);
+  -- CREATE INDEX answerid_idx ON Photos(AnswerID);
+  -- CREATE INDEX userid_q_idx ON Questions(UserID);
+  -- CREATE INDEX userid_a_idx ON Answers(UserID);
+  -- CREATE INDEX questionid_idx ON Answers(QuestionID);
