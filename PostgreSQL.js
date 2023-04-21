@@ -8,16 +8,21 @@ const login = {
   port: 5432 //Default psql port
 }
 
-async function connectionPool() {
-  const pool = new Pool(login);
-  const now = await pool.query("SELECT NOW()");
-  await pool.end();
-  return now;
-}
+const pool = new Pool(login);
 
-async function connect() {
-  const poolTime = await connectionPool();
-  console.log(`Time: ${poolTime.rows[0]["now"]}`);
-}
+// async function connectionPool() {
+//   const pool = new Pool(login);
+//   await pool.connect();
+//   const now = await pool.query("SELECT NOW()");
+//   console.log(`Time: ${now.rows[0]["now"]}`);
+//   await pool.end();
+//   return now;
+// }
 
-connect();
+// connectionPool();
+
+async function insertUser () {
+  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2)", ['Testname', 'TestingEmail@y.com']);
+  console.log(inserted);
+}
+insertUser();
