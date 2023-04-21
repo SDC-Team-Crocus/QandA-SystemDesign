@@ -9,6 +9,7 @@ const login = {
 }
 
 const pool = new Pool(login);
+pool.connect();
 
 // async function connectionPool() {
 //   const pool = new Pool(login);
@@ -22,7 +23,5 @@ const pool = new Pool(login);
 // connectionPool();
 
 async function insertUser () {
-  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2)", ['Testname', 'TestingEmail@y.com']);
-  console.log(inserted);
+  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2)", ['Testname5', 'TestingEmail@y.com']);
 }
-insertUser();
