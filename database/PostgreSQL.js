@@ -27,62 +27,60 @@ async function insertUser () {
 };
 
 async function getPhotos (answerID) {
+  const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
   let photosContainer = [];
-  const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID]);
-  if (photosData.length) {
-    for (let i = 0; i < photosData.row.length; i++) {
-      photosContainer.push(photosData.row[i].photourl)
-    }
+  for (let i = 0; i < photosData.rows.length; i++) {
+    photosContainer.push(photosData.rows[i].photourl)
   }
-  console.log(photosContainer);
   return photosContainer;
 };
 
 async function getAnswers (questionID) {
-  let answersContainer = {};
-  const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1", [questionID]);
-  if (answersData.length) {
-    for (let i = 0; i < answersData.row.length; i++) {
-      let currentRow = answersData.row[i];
+  const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1", [questionID])
+    let answersContainer = {};
+    for (let i = 0; i < answersData.rows.length; i++) {
+      let currentRow = answersData.rows[i];
+      let photosList = await getPhotos(currentRow.answerid);
       answersContainer[currentRow.answerid] = {
         id: currentRow.answerid,
         body: currentRow.answerbody,
-        date: new Date(currentRow.currentdate).toISOString(),
+        date: new Date(parseInt(currentRow.currentdate)).toISOString(),
         answerer_name: currentRow.username,
         helpfulness: currentRow.helpfulness,
-        photos: getPhotos(currentRow.answerid)
+        photos: photosList
       }
     }
-  }
-  console.log(answersContainer);
-  return answersData;
+    // console.log(answersContainer);
+    return answersContainer;
 };
 
-async function getQuestions (productID, count=5, page=1) {
-  let questionsContainer = [];
-  const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count]);
-  if (questionsData.length) {
-    for (let i = 0; i < questionsData.row.length; i++) {
-      let currentRow = questionsData.row[i];
-      questionsContainer.push({
-        question_id: currentRow.questionid,
-        question_body: currentRow.questionbody,
-        question_date: new Date(currentRow.currentdate).toISOString(),
-        asker_name: currentRow.username,
-        question_helpfulness: currentRow.helpfulness,
-        reported: !!currentRow.reported,
-        answers: getAnswers(currentRow.questionid)
-      })
-    }
+async function getQuestions (productID, count, page) {
+  if (!count) {
+    count = 5;
   }
-  console.log(questionsContainer);
+  if (!page) {
+    page = 1;
+  }
+
+  const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
+  let questionsContainer = [];
+      for (let i = 0; i < questionsData.rows.length; i++) {
+        let currentRow = questionsData.rows[i];
+        let answersList = await getAnswers(currentRow.questionid);
+        questionsContainer.push({
+          question_id: currentRow.questionid,
+          question_body: currentRow.questionbody,
+          question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+          asker_name: currentRow.username,
+          question_helpfulness: currentRow.helpfulness,
+          reported: !!currentRow.reported,
+          answers: answersList
+        })
+      }
   return questionsContainer;
 };
 
-getQuestions(71697)
-.then(data => {console.log(data)})
-.catch(e => {console.log(e)})
-// getAnswers(252261);
-// getPhotos(5);
-
-//{productID, results: [questions data, answers: [answer data, photos: [photodata]]]}
+module.exports.getQuestions = getQuestions;
+// getQuestions(71725).then(data=>{console.log(data)})
+// getAnswers(1).then(data=>{console.log(data)});
+// getPhotos(5).then(data=>{console.log(data)});

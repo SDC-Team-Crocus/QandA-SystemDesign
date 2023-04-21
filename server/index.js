@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const port = 3001;
+const { getQuestions } = require('../database/PostgreSQL');
 
 const App = express();
 App.use(express.json());
@@ -13,7 +14,10 @@ App.get('/', (req, res) => {
 App.get('/qa/questions', (req, res) => {
   console.log(req.query); //Access URL params
   console.log(req.body.params); //Access body params
-  res.sendStatus(200);
+  getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
+  .then(data => res.send(data))
+  .catch(err => res.sendStatus(404))
+
 });
 
 //Answer List - Params: product_id  Query param: page, count
