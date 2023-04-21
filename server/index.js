@@ -13,7 +13,7 @@ App.get('/', (req, res) => {
 App.get('/qa/questions', (req, res) => {
   console.log(req.query); //Access URL params
   console.log(req.body.params); //Access body params
-  res.send(200);
+  res.sendStatus(200);
 });
 
 //Answer List - Params: product_id  Query param: page, count
