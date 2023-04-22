@@ -1,10 +1,7 @@
 const express = require('express');
 const path = require('path');
 const port = 3001;
-const { getQuestions } = require('../database/PostgreSQL');
-const { getAnswers } = require('../database/PostgreSQL');
-const { postQuestion } = require('../database/PostgreSQL');
-const { postAnswer } = require('../database/PostgreSQL');
+const { getQuestions, getAnswers, postQuestion, postAnswer, markHelpful, report } = require('../database/PostgreSQL');
 
 const App = express();
 App.use(express.json());
@@ -46,22 +43,30 @@ App.post('/qa/questions/:question_id/answers', (req, res) => {
 
 //Mark Question Helpful - Params: question_id
 App.put('/qa/questions/:question_id/helpful', (req, res) => {
-
+  markHelpful(parseInt(req.params.question_id), "question")
+  .then(data => {res.sendStatus(204)})
+  .catch(err => {res.sendStatus(501)});
 });
 
 //Report Question - Params: question_id
 App.put('/qa/questions/:question_id/report', (req, res) => {
-
+  report(parseInt(req.params.question_id), "question")
+  .then(data => {res.sendStatus(204)})
+  .catch(err => {res.sendStatus(501)});
 });
 
 //Mark Answer Helpful - Params: answer_id
 App.put('/qa/answers/:answer_id/helpful', (req, res) => {
-
+  markHelpful(parseInt(req.params.answer_id), "answer")
+  .then(data => {res.sendStatus(204)})
+  .catch(err => {res.sendStatus(501)});
 });
 
 //Report Answer - Params: answer_id
 App.put('/qa/answers/:answer_id/report', (req, res) => {
-
+  report(parseInt(req.params.answer_id), "answer")
+  .then(data => {res.sendStatus(204)})
+  .catch(err => {res.sendStatus(501)});
 });
 
 App.listen(port, () => {

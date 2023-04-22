@@ -145,3 +145,5 @@ module.exports.getQuestions = getQuestions;
 module.exports.postQuestion = postQuestion;
 module.exports.getAnswers = getAnswers;
 module.exports.postAnswer = postAnswer;
+module.exports.markHelpful = markHelpful;
+module.exports.report = report;
