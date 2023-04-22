@@ -2,27 +2,30 @@ const express = require('express');
 const path = require('path');
 const port = 3001;
 const { getQuestions } = require('../database/PostgreSQL');
+const { getAnswers } = require('../database/PostgreSQL');
 
 const App = express();
 App.use(express.json());
 
-App.get('/', (req, res) => {
-  res.send('sup');
-});
+// console.log(req.query); //Access URL params
+// console.log(req.body.params); //Access body params
 
 //List Questions - Params: product_id, page, count
 App.get('/qa/questions', (req, res) => {
-  console.log(req.query); //Access URL params
-  console.log(req.body.params); //Access body params
-  getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then(data => res.send(data))
+  getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page), "questions")
+  .then(data => {
+    let returnedData = {product_id: req.query.product_id, results: data}
+    res.send(returnedData)})
   .catch(err => res.sendStatus(404))
-
 });
 
 //Answer List - Params: product_id  Query param: page, count
 App.get('/qa/questions/:question_id/answers', (req, res) => {
-
+  getAnswers(parseInt(req.params.question_id), "answers", parseInt(req.query.count), parseInt(req.query.page))
+  .then(data => {
+    let returnedData = {question: req.params.question_id, page: req.query.page, count: req.query.count, results: data}
+    res.send(returnedData)})
+  .catch(err => res.sendStatus(404))
 });
 
 //Add Question - Body params: body, name, email, product_id

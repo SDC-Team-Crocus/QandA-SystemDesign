@@ -11,62 +11,81 @@ const login = {
 const pool = new Pool(login);
 pool.connect();
 
-// async function connectionPool() {
-//   const pool = new Pool(login);
-//   await pool.connect();
-//   const now = await pool.query("SELECT NOW()");
-//   console.log(`Time: ${now.rows[0]["now"]}`);
-//   await pool.end();
-//   return now;
-// }
-
-// connectionPool();
-
 async function insertUser () {
   const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2) ON CONFLICT DO NOTHING", ['Testname6', 'TestingEmail@y.com']);
 };
 
-async function getPhotos (answerID) {
+async function getPhotos (answerID, method) {
   const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
   let photosContainer = [];
-  for (let i = 0; i < photosData.rows.length; i++) {
-    photosContainer.push(photosData.rows[i].photourl)
+  if (method === "questions") {
+    for (let i = 0; i < photosData.rows.length; i++) {
+      photosContainer.push(photosData.rows[i].photourl)
+    }
+  } else if (method === "answers") {
+    for (let i = 0; i < photosData.rows.length; i++) {
+      photosContainer.push({
+          id: photosData.rows[i].photoid,
+          url: photosData.rows[i].photourl
+        });
+    }
   }
   return photosContainer;
 };
 
-async function getAnswers (questionID) {
-  const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1", [questionID])
+async function getAnswers (questionID, method, count, page) {
+  if (!count) {
+    count = 100;
+  }
+  if (!page) {
+    page = 1;
+  }
+  const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
+  if (method === "questions") {
     let answersContainer = {};
+      for (let i = 0; i < answersData.rows.length; i++) {
+        let currentRow = answersData.rows[i];
+        let photosList = await getPhotos(currentRow.answerid, method);
+        answersContainer[currentRow.answerid] = {
+          id: currentRow.answerid,
+          body: currentRow.answerbody,
+          date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+          answerer_name: currentRow.username,
+          helpfulness: currentRow.helpfulness,
+          photos: photosList
+        }
+      }
+      return answersContainer;
+  } else if (method === "answers") {
+    let answersContainer = [];
     for (let i = 0; i < answersData.rows.length; i++) {
       let currentRow = answersData.rows[i];
-      let photosList = await getPhotos(currentRow.answerid);
-      answersContainer[currentRow.answerid] = {
-        id: currentRow.answerid,
+      let photosList = await getPhotos(currentRow.answerid, method);
+      answersContainer.push({
+        answer_id: currentRow.answerid,
         body: currentRow.answerbody,
         date: new Date(parseInt(currentRow.currentdate)).toISOString(),
         answerer_name: currentRow.username,
         helpfulness: currentRow.helpfulness,
         photos: photosList
-      }
+      })
     }
-    // console.log(answersContainer);
     return answersContainer;
+  }
 };
 
-async function getQuestions (productID, count, page) {
+async function getQuestions (productID, count, page, method) {
   if (!count) {
     count = 5;
   }
   if (!page) {
     page = 1;
   }
-
   const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
   let questionsContainer = [];
       for (let i = 0; i < questionsData.rows.length; i++) {
         let currentRow = questionsData.rows[i];
-        let answersList = await getAnswers(currentRow.questionid);
+        let answersList = await getAnswers(currentRow.questionid, method);
         questionsContainer.push({
           question_id: currentRow.questionid,
           question_body: currentRow.questionbody,
@@ -81,6 +100,7 @@ async function getQuestions (productID, count, page) {
 };
 
 module.exports.getQuestions = getQuestions;
+module.exports.getAnswers = getAnswers;
 // getQuestions(71725).then(data=>{console.log(data)})
 // getAnswers(1).then(data=>{console.log(data)});
 // getPhotos(5).then(data=>{console.log(data)});
