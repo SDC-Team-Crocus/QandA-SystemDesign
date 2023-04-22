@@ -11,8 +11,8 @@ const login = {
 const pool = new Pool(login);
 pool.connect();
 
-async function insertUser () {
-  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2) ON CONFLICT DO NOTHING", ['Testname6', 'TestingEmail@y.com']);
+async function insertUser (name, email) {
+  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2) ON CONFLICT DO NOTHING", [name, email]);
 };
 
 async function getPhotos (answerID, method) {
@@ -99,8 +99,11 @@ async function getQuestions (productID, count, page, method) {
   return questionsContainer;
 };
 
+async function postQuestion (body, name, email, productID) {
+  await insertUser(name, email);
+  return pool.query("INSERT INTO Questions (QuestionBody, UserID, ProductID, CurrentDate) VALUES ($1, (SELECT UserID FROM Users WHERE UserName = $2), $3, $4)", [body, name, productID, (new Date()).getTime()]);
+}
+
+module.exports.postQuestion = postQuestion;
 module.exports.getQuestions = getQuestions;
 module.exports.getAnswers = getAnswers;
-// getQuestions(71725).then(data=>{console.log(data)})
-// getAnswers(1).then(data=>{console.log(data)});
-// getPhotos(5).then(data=>{console.log(data)});
