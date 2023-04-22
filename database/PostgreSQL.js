@@ -112,10 +112,11 @@ async function postQuestion (body, name, email, productID) {
 
 async function postAnswer (body, name, email, questionID, photos) {
   await insertUser(name, email);
-  return pool.query("INSERT INTO Answers (QuestionBody, UserID, ProductID, CurrentDate) VALUES ($1, (SELECT UserID FROM Users WHERE UserName = $2), $3, $4)", [body, name, productID, (new Date()).getTime()]);
+  return pool.query("INSERT INTO Answers (AnswerBody, UserID, QuestionID, CurrentDate) VALUES ($1, (SELECT UserID FROM Users WHERE UserName = $2), $3, $4) RETURNING AnswerID", [body, name, questionID, (new Date()).getTime()])
+  .then(data => (insertPhotos(data.rows[0].answerid, photos)))
 }
 
-insertPhotos(492391, ["https://images.unsplash.com/photo-1513531926349-466f15ec8cc7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"])
-module.exports.postQuestion = postQuestion;
 module.exports.getQuestions = getQuestions;
+module.exports.postQuestion = postQuestion;
 module.exports.getAnswers = getAnswers;
+module.exports.postAnswer = postAnswer;

@@ -4,6 +4,7 @@ const port = 3001;
 const { getQuestions } = require('../database/PostgreSQL');
 const { getAnswers } = require('../database/PostgreSQL');
 const { postQuestion } = require('../database/PostgreSQL');
+const { postAnswer } = require('../database/PostgreSQL');
 
 const App = express();
 App.use(express.json());
@@ -38,7 +39,9 @@ App.post('/qa/questions', (req, res) => {
 
 //Add Answer - Params: question_id  Body params: body, name, email, photos
 App.post('/qa/questions/:question_id/answers', (req, res) => {
-
+  postAnswer(req.body.body, req.body.name, req.body.email, parseInt(req.params.question_id), req.body.photos)
+  .then(data => {res.sendStatus(201)})
+  .catch(err => {res.sendStatus(501)});
 });
 
 //Mark Question Helpful - Params: question_id
