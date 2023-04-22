@@ -12,8 +12,14 @@ const pool = new Pool(login);
 pool.connect();
 
 async function insertUser (name, email) {
-  const inserted = await pool.query("Insert into Users (UserName, Email) VALUES ($1, $2) ON CONFLICT DO NOTHING", [name, email]);
+  const inserted = await pool.query("INSERT INTO Users (UserName, Email) VALUES ($1, $2) ON CONFLICT DO NOTHING", [name, email]);
 };
+
+async function insertPhotos (answerid, photos) {
+  for (let i = 0; i < photos.length; i++) {
+    await pool.query("INSERT INTO Photos (AnswerID, PhotoURL) VALUES ($1, $2)", [answerid, photos[i]]);
+  }
+}
 
 async function getPhotos (answerID, method) {
   const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
@@ -104,6 +110,12 @@ async function postQuestion (body, name, email, productID) {
   return pool.query("INSERT INTO Questions (QuestionBody, UserID, ProductID, CurrentDate) VALUES ($1, (SELECT UserID FROM Users WHERE UserName = $2), $3, $4)", [body, name, productID, (new Date()).getTime()]);
 }
 
+async function postAnswer (body, name, email, questionID, photos) {
+  await insertUser(name, email);
+  return pool.query("INSERT INTO Answers (QuestionBody, UserID, ProductID, CurrentDate) VALUES ($1, (SELECT UserID FROM Users WHERE UserName = $2), $3, $4)", [body, name, productID, (new Date()).getTime()]);
+}
+
+insertPhotos(492391, ["https://images.unsplash.com/photo-1513531926349-466f15ec8cc7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80"])
 module.exports.postQuestion = postQuestion;
 module.exports.getQuestions = getQuestions;
 module.exports.getAnswers = getAnswers;
