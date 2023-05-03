@@ -34,14 +34,14 @@ describe('Unit Tests for all POST Requests', () => {
 
   test('It should add an ANSWER with IMAGES to the database tables based on Question ID', async () => {
     const payload = {body: "Am I Answer with Images?", name: 'Foo', email: "Foo@Bar.Baz", photos: ['google.com']};
-    const res = await superTestRequest.post('/qa/questions/71701/answers')
+    const res = await superTestRequest.post('/qa/questions/1111/answers')
       .send(payload)
     expect(res.status).toEqual(201);
   });
 
   test('It should add an ANSWER without IMAGES to the database tables based on Question ID', async () => {
     const payload = {body: "Am I Answer without Image?", name: 'Foo', email: "Foo@Bar.Baz", photos: []};
-    const res = await superTestRequest.post('/qa/questions/71701/answers')
+    const res = await superTestRequest.post('/qa/questions/1111/answers')
       .send(payload)
     expect(res.status).toEqual(201);
   });
@@ -51,18 +51,22 @@ describe('Unit Tests for all POST Requests', () => {
 describe('Unit Tests for all PUT Requests', () => {
 
   test('It should increase a QUESTION\'s helpfulness by 1', async () => {
-    expect((1 + 2)).toBe(3);
+    const res = await superTestRequest.put('/qa/questions/2222/helpful');
+    expect(res.status).toEqual(204);
   });
 
   test('It should increase an ANSWER\'s helpfulness by 1', async () => {
-    expect(false).toBe(true);
+    const res = await superTestRequest.put('/qa/answers/3333/helpful');
+    expect(res.status).toEqual(204);
   });
 
   test('It should change QUESTIONS\'s report status to true and stay as true', async () => {
-    expect(false).toBe(true);
+    const res = await superTestRequest.put('/qa/questions/2222/report');
+    expect(res.status).toEqual(204);
   });
 
   test('It should change ANSWER\'s report status to true and stay as true', async () => {
-    expect(false).toBe(true);
+    const res = await superTestRequest.put('/qa/answers/3333/report');
+    expect(res.status).toEqual(204);
   });
 })
