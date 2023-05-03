@@ -18,7 +18,7 @@ App.get('/qa/questions', (req, res) => {
   .catch(err => {res.sendStatus(404)});
 });
 
-//Answer List - Params: product_id  Query param: page, count
+//Answer List - Params: question_id  Query param: page, count
 App.get('/qa/questions/:question_id/answers', (req, res) => {
   getAnswers(parseInt(req.params.question_id), "answers", parseInt(req.query.count), parseInt(req.query.page))
   .then(data => {
@@ -72,3 +72,5 @@ App.put('/qa/answers/:answer_id/report', (req, res) => {
 App.listen(port, () => {
   console.log(`Listening to port: ${port}`);
 });
+
+module.exports = App;

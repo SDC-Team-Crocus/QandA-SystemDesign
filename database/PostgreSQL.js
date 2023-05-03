@@ -147,3 +147,4 @@ module.exports.getAnswers = getAnswers;
 module.exports.postAnswer = postAnswer;
 module.exports.markHelpful = markHelpful;
 module.exports.report = report;
+module.exports.pool = pool;
