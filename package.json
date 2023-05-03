@@ -4,7 +4,7 @@
   "description": "Question and Answer backend server and database",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --coverage",
     "server-dev": "nodemon ./server/index.js"
   },
   "jest": {
