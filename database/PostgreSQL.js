@@ -24,23 +24,23 @@ async function insertPhotos (answerid, photos) {
 }
 
 //Get photos. 1 format for answers and another for questions
-async function getPhotos (answerID, method) {
-  const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
-  let photosContainer = [];
-  if (method === "questions") {
-    for (let i = 0; i < photosData.rows.length; i++) {
-      photosContainer.push(photosData.rows[i].photourl)
-    }
-  } else if (method === "answers") {
-    for (let i = 0; i < photosData.rows.length; i++) {
-      photosContainer.push({
-          id: photosData.rows[i].photoid,
-          url: photosData.rows[i].photourl
-        });
-    }
-  }
-  return photosContainer;
-};
+// async function getPhotos (answerID, method) {
+//   const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
+//   let photosContainer = [];
+//   if (method === "questions") {
+//     for (let i = 0; i < photosData.rows.length; i++) {
+//       photosContainer.push(photosData.rows[i].photourl)
+//     }
+//   } else if (method === "answers") {
+//     for (let i = 0; i < photosData.rows.length; i++) {
+//       photosContainer.push({
+//           id: photosData.rows[i].photoid,
+//           url: photosData.rows[i].photourl
+//         });
+//     }
+//   }
+//   return photosContainer;
+// };
 
 //Gets answers for question id. 2 formats. 1 for when questions format is called and 1 for answer api format. Calls photos
 async function getAnswers (questionID, method, count, page) {
@@ -51,37 +51,39 @@ async function getAnswers (questionID, method, count, page) {
     page = 1;
   }
   const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
-  if (method === "questions") {
-    let answersContainer = {};
-      for (let i = 0; i < answersData.rows.length; i++) {
-        let currentRow = answersData.rows[i];
-        let photosList = await getPhotos(currentRow.answerid, method);
-        answersContainer[currentRow.answerid] = {
-          id: currentRow.answerid,
-          body: currentRow.answerbody,
-          date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-          answerer_name: currentRow.username,
-          helpfulness: currentRow.helpfulness,
-          photos: photosList
-        }
-      }
-      return answersContainer;
-  } else if (method === "answers") {
-    let answersContainer = [];
-    for (let i = 0; i < answersData.rows.length; i++) {
-      let currentRow = answersData.rows[i];
-      let photosList = await getPhotos(currentRow.answerid, method);
-      answersContainer.push({
-        answer_id: currentRow.answerid,
-        body: currentRow.answerbody,
-        date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-        answerer_name: currentRow.username,
-        helpfulness: currentRow.helpfulness,
-        photos: photosList
-      })
-    }
-    return answersContainer;
-  }
+  return answersData;
+  // const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
+  // if (method === "questions") {
+  //   let answersContainer = {};
+  //     for (let i = 0; i < answersData.rows.length; i++) {
+  //       let currentRow = answersData.rows[i];
+  //       let photosList = await getPhotos(currentRow.answerid, method);
+  //       answersContainer[currentRow.answerid] = {
+  //         id: currentRow.answerid,
+  //         body: currentRow.answerbody,
+  //         date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //         answerer_name: currentRow.username,
+  //         helpfulness: currentRow.helpfulness,
+  //         photos: photosList
+  //       }
+  //     }
+  //     return answersContainer;
+  // } else if (method === "answers") {
+  //   let answersContainer = [];
+  //   for (let i = 0; i < answersData.rows.length; i++) {
+  //     let currentRow = answersData.rows[i];
+  //     let photosList = await getPhotos(currentRow.answerid, method);
+  //     answersContainer.push({
+  //       answer_id: currentRow.answerid,
+  //       body: currentRow.answerbody,
+  //       date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //       answerer_name: currentRow.username,
+  //       helpfulness: currentRow.helpfulness,
+  //       photos: photosList
+  //     })
+  //   }
+  //   return answersContainer;
+  // }
 };
 
 //Gets all questions for product ids, calls for answers and photos as well
@@ -92,22 +94,27 @@ async function getQuestions (productID, count, page, method) {
   if (!page) {
     page = 1;
   }
-  const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
-  let questionsContainer = [];
-      for (let i = 0; i < questionsData.rows.length; i++) {
-        let currentRow = questionsData.rows[i];
-        let answersList = await getAnswers(currentRow.questionid, method);
-        questionsContainer.push({
-          question_id: currentRow.questionid,
-          question_body: currentRow.questionbody,
-          question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-          asker_name: currentRow.username,
-          question_helpfulness: currentRow.helpfulness,
-          reported: !!currentRow.reported,
-          answers: answersList
-        })
-      }
-  return questionsContainer;
+  const questionsData = await pool.query(
+    "SELECT json_build_object(
+      'product_id', $1,
+      'results', json_agg(answers)) FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count]);
+  return questionsData;
+  // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
+  // let questionsContainer = [];
+  //     for (let i = 0; i < questionsData.rows.length; i++) {
+  //       let currentRow = questionsData.rows[i];
+  //       let answersList = await getAnswers(currentRow.questionid, method);
+  //       questionsContainer.push({
+  //         question_id: currentRow.questionid,
+  //         question_body: currentRow.questionbody,
+  //         question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //         asker_name: currentRow.username,
+  //         question_helpfulness: currentRow.helpfulness,
+  //         reported: !!currentRow.reported,
+  //         answers: answersList
+  //       })
+  //     }
+  // return questionsContainer;
 };
 
 //Posts question to database
