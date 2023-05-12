@@ -27,6 +27,7 @@ export const options = {
 }
 export default function () {
   // http.get('http://localhost:3001/qa/questions/1111/answers');
-  http.get('http://localhost:3001/qa/questions?product_id=71705');
+  let id = Math.floor(Math.random() * (1000011 - 71000) + 71000);
+  http.get(`http://localhost:3001/qa/questions?product_id=${id}`);
   sleep(1);
 }
