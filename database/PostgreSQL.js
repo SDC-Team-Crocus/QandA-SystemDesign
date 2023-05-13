@@ -94,7 +94,51 @@ async function getQuestions (productID, count, page, method) {
   if (!page) {
     page = 1;
   }
-  const questionsData = await pool.query()
+  const questionsData = await pool.query(
+    `SELECT json_build_object(
+      'product_id', ${productID},
+      'results', (WITH result AS (SELECT * FROM questions WHERE productID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count})
+        SELECT json_agg(json_build_object(
+          'question_id', result.questionid,
+          'question_body', result.questionbody,
+          'question_date', result.currentdate,
+          'asker_name', (SELECT username FROM Users, result WHERE Users.userid = questions.userid),
+          'question_helpfulness', result.helpfulness,
+          'reported', result.reported,
+          'answers', json_object_agg(SELECT json_object_agg(answers.answerid, json_build_object(
+            'id', answers.answerid,
+            'body', answers.body,
+            'date', answers.currentdate,
+            'answerer_name', (SELECT username FROM Users, answers WHERE Users.userid = answers.userid),
+            'helpfulness', answers.helpfulness,
+            'photos', json_agg()
+          )))
+        )
+      )
+    )
+    FROM questions
+    LEFT JOIN (
+      SELECT answers.questionId, json_object_agg(
+        answers.answerid, json_build_object(
+          'id', answers.answerid,
+          'body', answers.answerbody,
+          'date', answers.currentdate,
+          'answerer_name', answers.userid,
+          'helpfulness', answers.helpfulness,
+          'photos', photosList
+        )
+      ) AS answerList
+      FROM answers
+      LEFT JOIN (
+        SELECT photos.answerid, json_agg(
+            photos.photourl
+        ) AS photosList
+        FROM photos GROUP BY 1
+        )
+        photos ON photos.answerid = answers.answerid GROUP BY 1
+        )
+      answers ON answers.questionid = questions.questionid
+      WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
 
   return questionsData
 
