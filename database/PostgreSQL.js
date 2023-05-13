@@ -95,44 +95,51 @@ async function getQuestions (productID, count, page, method) {
     page = 1;
   }
   const questionsData = await pool.query(
-    "SELECT json_build_object(
+    `SELECT json_build_object(
       'product_id', $1,
       'results', json_agg(
         json_build_object(
           'question_id', questions.questionid,
           'question_body', questions.questionbody,
-          'question_date', questions.currentdate//Something about new date here parse
-          'asker_name', questions.userid, //Find user with this id within user table
+          'question_date', questions.currentdate,
+          'asker_name', questions.userid,
           'question_helpfulness', questions.helpfulness,
-          'reported', questions.reported //something to translate to boolean
+          'reported', questions.reported,
           'answers', answerList
         )
       )
-    ) questionsList
-    FROM questions
+    ) AS questionsList
+    FROM questions AS q
     LEFT JOIN (
       SELECT json_build_object(
-          answers.answerid, json_build_object(
-            'id', answers.answerid,
-            'body', answers.answerbody,
-            'date', answers.currentdate,
-            'answerer_name', answers.userid,
-            'helpfulness', answers.helpfulness,
-            'photos', photosList
-          )
-        ) answersList
+        answers.answerid, json_build_object(
+          'id', answers.answerid,
+          'body', answers.answerbody,
+          'date', answers.currentdate,
+          'answerer_name', answers.userid,
+          'helpfulness', answers.helpfulness,
+          'photos', photosList
+        )
+      ) AS answersList
       FROM answers
       LEFT JOIN (
         SELECT json_build_object (
           'photos', json_agg(
-            photos.photourl)
-        ) photosList
+            photos.photourl
+          )
+        ) AS photosList
         FROM photos)
-        photos ON photos.answerid = answers.answerid
+        photos AS p ON p.answerid = answers.answerid
         )
-      ON answers.questionid = questions.questionid
-      WHERE ProductID = $1 LIMIT $2 OFFSET $3"
+      answers AS a ON a.questionid = q.questionid
+      WHERE q.ProductID = $1 LIMIT $2 OFFSET $3`
     , [productID, count, (page-1)*count]);
+
+
+    // 'question_date', questions.currentdate//Something about new date here parse
+    // 'asker_name', questions.userid, //Find user with this id within user table
+    // 'question_helpfulness', questions.helpfulness,
+    // 'reported', questions.reported //something to translate to boolean
 
   return questionsData;
   // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
