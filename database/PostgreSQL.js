@@ -94,7 +94,13 @@ async function getQuestions (productID, count, page, method) {
   if (!page) {
     page = 1;
   }
-  const questionsData = await pool.query(
+  const questionsData = await pool.query()
+
+  return questionsData
+
+
+
+    /*--------------DO NOT USE. REALLY SLOW FORMAT----------
     `SELECT json_build_object(
       'product_id', ${productID},
       'results', json_agg(
@@ -133,29 +139,34 @@ async function getQuestions (productID, count, page, method) {
       answers ON answers.questionid = questions.questionid
       WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
 
-  console.log(questionsData);
     // 'question_date', questions.currentdate//Something about new date here parse
     // 'asker_name', questions.userid, //Find user with this id within user table
     // 'question_helpfulness', questions.helpfulness,
     // 'reported', questions.reported //something to translate to boolean
 
-  return questionsData;
-  // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
-  // let questionsContainer = [];
-  //     for (let i = 0; i < questionsData.rows.length; i++) {
-  //       let currentRow = questionsData.rows[i];
-  //       let answersList = await getAnswers(currentRow.questionid, method);
-  //       questionsContainer.push({
-  //         question_id: currentRow.questionid,
-  //         question_body: currentRow.questionbody,
-  //         question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-  //         asker_name: currentRow.username,
-  //         question_helpfulness: currentRow.helpfulness,
-  //         reported: !!currentRow.reported,
-  //         answers: answersList
-  //       })
-  //     }
-  // return questionsContainer;
+  return questionsData.rows[0].json_build_object;
+
+  -------------------SLOW JSON FORMAT -----------------*/
+
+
+  /*-------------------FAST BUT USES JAVASCRIPT-----------------
+  const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
+  let questionsContainer = [];
+      for (let i = 0; i < questionsData.rows.length; i++) {
+        let currentRow = questionsData.rows[i];
+        let answersList = await getAnswers(currentRow.questionid, method);
+        questionsContainer.push({
+          question_id: currentRow.questionid,
+          question_body: currentRow.questionbody,
+          question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+          asker_name: currentRow.username,
+          question_helpfulness: currentRow.helpfulness,
+          reported: !!currentRow.reported,
+          answers: answersList
+        })
+      }
+  return questionsContainer;
+  -----------------------FAST BUT USES JAVASCRIPT------------*/
 };
 
 //Posts question to database
