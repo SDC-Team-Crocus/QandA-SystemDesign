@@ -15,7 +15,8 @@ App.get('/qa/questions', (req, res) => {
   .then(data => {
     let returnedData = {product_id: req.query.product_id, results: data}
     res.status(200).send(returnedData)})
-  .catch(err => {res.sendStatus(404)});
+  .catch(err => {
+    console.log(err);res.sendStatus(404)});
 });
 
 //Answer List - Params: question_id  Query param: page, count

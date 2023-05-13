@@ -96,7 +96,7 @@ async function getQuestions (productID, count, page, method) {
   }
   const questionsData = await pool.query(
     `SELECT json_build_object(
-      'product_id', $1,
+      'product_id', ${productID},
       'results', json_agg(
         json_build_object(
           'question_id', questions.questionid,
@@ -108,10 +108,10 @@ async function getQuestions (productID, count, page, method) {
           'answers', answerList
         )
       )
-    ) AS questionsList
-    FROM questions AS q
+    )
+    FROM questions
     LEFT JOIN (
-      SELECT json_build_object(
+      SELECT answers.questionId, json_object_agg(
         answers.answerid, json_build_object(
           'id', answers.answerid,
           'body', answers.answerbody,
@@ -120,22 +120,20 @@ async function getQuestions (productID, count, page, method) {
           'helpfulness', answers.helpfulness,
           'photos', photosList
         )
-      ) AS answersList
+      ) AS answerList
       FROM answers
       LEFT JOIN (
-        SELECT json_build_object (
-          'photos', json_agg(
+        SELECT photos.answerid, json_agg(
             photos.photourl
-          )
         ) AS photosList
-        FROM photos)
-        photos AS p ON p.answerid = answers.answerid
+        FROM photos GROUP BY 1
         )
-      answers AS a ON a.questionid = q.questionid
-      WHERE q.ProductID = $1 LIMIT $2 OFFSET $3`
-    , [productID, count, (page-1)*count]);
+        photos ON photos.answerid = answers.answerid GROUP BY 1
+        )
+      answers ON answers.questionid = questions.questionid
+      WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
 
-
+  console.log(questionsData);
     // 'question_date', questions.currentdate//Something about new date here parse
     // 'asker_name', questions.userid, //Find user with this id within user table
     // 'question_helpfulness', questions.helpfulness,
