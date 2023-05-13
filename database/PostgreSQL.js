@@ -102,7 +102,7 @@ async function getQuestions (productID, count, page, method) {
           'question_id', questions.questionid,
           'question_body', questions.questionbody,
           'question_date', questions.currentdate//Something about new date here parse
-          'asker_name', questions.userid,
+          'asker_name', questions.userid, //Find user with this id within user table
           'question_helpfulness', questions.helpfulness,
           'reported', questions.reported //something to translate to boolean
           'answers', answerList
