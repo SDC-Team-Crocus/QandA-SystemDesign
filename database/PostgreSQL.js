@@ -97,7 +97,45 @@ async function getQuestions (productID, count, page, method) {
   const questionsData = await pool.query(
     "SELECT json_build_object(
       'product_id', $1,
-      'results', json_agg(answers)) FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count]);
+      'results', json_agg(
+        json_build_object(
+          'question_id', questions.questionid,
+          'question_body', questions.questionbody,
+          'question_date', questions.currentdate//Something about new date here parse
+          'asker_name', questions.userid,
+          'question_helpfulness', questions.helpfulness,
+          'reported', questions.reported //something to translate to boolean
+          'answers', answerList
+        )
+      )
+    ) questionsList
+    FROM questions
+    LEFT JOIN (
+      SELECT json_build_object(
+          answers.answerid, json_build_object(
+            'id', answers.answerid,
+            'body', answers.answerbody,
+            'date', answers.currentdate,
+            'answerer_name', answers.userid,
+            'helpfulness', answers.helpfulness,
+            'photos', photosList
+          )
+        ) answersList
+      FROM answers
+      LEFT JOIN (
+        SELECT json_build_object (
+          'photos', json_agg(
+            photos.photourl)
+        ) photosList
+        FROM photos)
+        photos ON photos.answerid = answers.answerid
+        )
+      ON answers.questionid = questions.questionid
+    ")
+
+
+
+  FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count]);
   return questionsData;
   // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
   // let questionsContainer = [];
