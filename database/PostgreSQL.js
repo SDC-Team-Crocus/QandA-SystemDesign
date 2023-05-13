@@ -131,11 +131,9 @@ async function getQuestions (productID, count, page, method) {
         photos ON photos.answerid = answers.answerid
         )
       ON answers.questionid = questions.questionid
-    ")
+      WHERE ProductID = $1 LIMIT $2 OFFSET $3"
+    , [productID, count, (page-1)*count]);
 
-
-
-  FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count]);
   return questionsData;
   // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
   // let questionsContainer = [];
