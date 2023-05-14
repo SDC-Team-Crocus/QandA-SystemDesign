@@ -62,7 +62,7 @@ async function getAnswers (questionID, count, page) {
         'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
         'helpfulness', answers.helpfulness,
         'photos', COALESCE((SELECT json_agg(json_build_object('id', photos.photoid, 'url', photos.photourl)) FROM photos WHERE photos.answerID = answers.answerID), '[]')
-      )) FROM answers WHERE answers.questionid = ${questionID} LIMIT ${count} OFFSET ${(page-1)*count}), '{}')`
+      )) FROM answers WHERE answers.questionid = ${questionID} LIMIT ${count} OFFSET ${(page-1)*count}), '[]')`
   )
 return answersData.rows[0].coalesce;
 
