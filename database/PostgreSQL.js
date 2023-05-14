@@ -23,27 +23,29 @@ async function insertPhotos (answerid, photos) {
   }
 }
 
+/* ----------------- OBSOLETE DUE TO USING POSTGRES -------------------- */
 //Get photos. 1 format for answers and another for questions
-async function getPhotos (answerID, method) {
-  const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
-  let photosContainer = [];
-  if (method === "questions") {
-    for (let i = 0; i < photosData.rows.length; i++) {
-      photosContainer.push(photosData.rows[i].photourl)
-    }
-  } else if (method === "answers") {
-    for (let i = 0; i < photosData.rows.length; i++) {
-      photosContainer.push({
-          id: photosData.rows[i].photoid,
-          url: photosData.rows[i].photourl
-        });
-    }
-  }
-  return photosContainer;
-};
+// async function getPhotos (answerID, method) {
+//   const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
+//   let photosContainer = [];
+//   if (method === "questions") {
+//     for (let i = 0; i < photosData.rows.length; i++) {
+//       photosContainer.push(photosData.rows[i].photourl)
+//     }
+//   } else if (method === "answers") {
+//     for (let i = 0; i < photosData.rows.length; i++) {
+//       photosContainer.push({
+//           id: photosData.rows[i].photoid,
+//           url: photosData.rows[i].photourl
+//         });
+//     }
+//   }
+//   return photosContainer;
+// };
+/* ----------------- OBSOLETE DUE TO USING POSTGRES -------------------- */
 
 //Gets answers for question id. 2 formats. 1 for when questions format is called and 1 for answer api format. Calls photos
-async function getAnswers (questionID, method, count, page) {
+async function getAnswers (questionID, count, page) {
   if (!count) {
     count = 100;
   }
@@ -86,7 +88,7 @@ async function getAnswers (questionID, method, count, page) {
 };
 
 //Gets all questions for product ids, calls for answers and photos as well
-async function getQuestions (productID, count, page, method) {
+async function getQuestions (productID, count, page) {
   if (!count) {
     count = 5;
   }
@@ -94,6 +96,7 @@ async function getQuestions (productID, count, page, method) {
     page = 1;
   }
 
+  /* Fastest Method Using PostGreSql */
   const questionsData = await pool.query(
         `SELECT json_agg(json_build_object(
           'question_id', questions.questionid,
@@ -115,56 +118,50 @@ async function getQuestions (productID, count, page, method) {
   )
   return questionsData.rows[0].json_agg;
 
-    /*--------------DO NOT USE. REALLY SLOW FORMAT----------
-    `SELECT json_build_object(
-      'product_id', ${productID},
-      'results', json_agg(
-        json_build_object(
-          'question_id', questions.questionid,
-          'question_body', questions.questionbody,
-          'question_date', questions.currentdate,
-          'asker_name', questions.userid,
-          'question_helpfulness', questions.helpfulness,
-          'reported', questions.reported,
-          'answers', answerList
-        )
-      )
-    )
-    FROM questions
-    LEFT JOIN (
-      SELECT answers.questionId, json_object_agg(
-        answers.answerid, json_build_object(
-          'id', answers.answerid,
-          'body', answers.answerbody,
-          'date', answers.currentdate,
-          'answerer_name', answers.userid,
-          'helpfulness', answers.helpfulness,
-          'photos', photosList
-        )
-      ) AS answerList
-      FROM answers
-      LEFT JOIN (
-        SELECT photos.answerid, json_agg(
-            photos.photourl
-        ) AS photosList
-        FROM photos GROUP BY 1
-        )
-        photos ON photos.answerid = answers.answerid GROUP BY 1
-        )
-      answers ON answers.questionid = questions.questionid
-      WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
+/*--------------DO NOT USE. REALLY SLOW FORMAT---------------*/
+  //   `SELECT json_build_object(
+  //     'product_id', ${productID},
+  //     'results', json_agg(
+  //       json_build_object(
+  //         'question_id', questions.questionid,
+  //         'question_body', questions.questionbody,
+  //         'question_date', questions.currentdate,
+  //         'asker_name', questions.userid,
+  //         'question_helpfulness', questions.helpfulness,
+  //         'reported', questions.reported,
+  //         'answers', answerList
+  //       )
+  //     )
+  //   )
+  //   FROM questions
+  //   LEFT JOIN (
+  //     SELECT answers.questionId, json_object_agg(
+  //       answers.answerid, json_build_object(
+  //         'id', answers.answerid,
+  //         'body', answers.answerbody,
+  //         'date', answers.currentdate,
+  //         'answerer_name', answers.userid,
+  //         'helpfulness', answers.helpfulness,
+  //         'photos', photosList
+  //       )
+  //     ) AS answerList
+  //     FROM answers
+  //     LEFT JOIN (
+  //       SELECT photos.answerid, json_agg(
+  //           photos.photourl
+  //       ) AS photosList
+  //       FROM photos GROUP BY 1
+  //       )
+  //       photos ON photos.answerid = answers.answerid GROUP BY 1
+  //       )
+  //     answers ON answers.questionid = questions.questionid
+  //     WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
 
-    // 'question_date', questions.currentdate//Something about new date here parse
-    // 'asker_name', questions.userid, //Find user with this id within user table
-    // 'question_helpfulness', questions.helpfulness,
-    // 'reported', questions.reported //something to translate to boolean
-
-  return questionsData.rows[0].json_build_object;
-
-  -------------------SLOW JSON FORMAT -----------------*/
+  // return questionsData.rows[0].json_build_object;
+/*--------------DO NOT USE. REALLY SLOW FORMAT---------------*/
 
 
-  /*-------------------FAST BUT USES JAVASCRIPT-----------------*/
+/* -------------------FAST BUT USES JAVASCRIPT----------------- */
   // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
   // let questionsContainer = [];
   //     for (let i = 0; i < questionsData.rows.length; i++) {
@@ -181,7 +178,7 @@ async function getQuestions (productID, count, page, method) {
   //       })
   //     }
   // return questionsContainer;
-  /*-----------------------FAST BUT USES JAVASCRIPT------------*/
+/* -------------------FAST BUT USES JAVASCRIPT----------------- */
 };
 
 //Posts question to database

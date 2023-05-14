@@ -13,15 +13,15 @@ export const options = {
       //Method of rate
       executor: 'constant-arrival-rate',
       //How long test runs
-      duration: '1m',
+      duration: '2m',
       //Rate per timeUnit
-      rate: 2000,
+      rate: 10000,
       //Time Unit
       timeUnit: '1s',
       //Initial Virtual Users
       preAllocatedVUs: 2,
       //Max Virtual Users
-      maxVUs: 4000
+      maxVUs: 13000
     }
   }
 }
