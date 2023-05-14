@@ -53,38 +53,57 @@ async function getAnswers (questionID, count, page) {
     page = 1;
   }
 
-  const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
-  if (method === "questions") {
-    let answersContainer = {};
-      for (let i = 0; i < answersData.rows.length; i++) {
-        let currentRow = answersData.rows[i];
-        let photosList = await getPhotos(currentRow.answerid, method);
-        answersContainer[currentRow.answerid] = {
-          id: currentRow.answerid,
-          body: currentRow.answerbody,
-          date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-          answerer_name: currentRow.username,
-          helpfulness: currentRow.helpfulness,
-          photos: photosList
-        }
-      }
-      return answersContainer;
-  } else if (method === "answers") {
-    let answersContainer = [];
-    for (let i = 0; i < answersData.rows.length; i++) {
-      let currentRow = answersData.rows[i];
-      let photosList = await getPhotos(currentRow.answerid, method);
-      answersContainer.push({
-        answer_id: currentRow.answerid,
-        body: currentRow.answerbody,
-        date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-        answerer_name: currentRow.username,
-        helpfulness: currentRow.helpfulness,
-        photos: photosList
-      })
-    }
-    return answersContainer;
-  }
+  /* Fastest Method Using PostGreSql */
+  const answersData = await pool.query(
+    `COALESCE((SELECT (json_agg(json_build_object(
+        'id', answers.answerid,
+        'body', answers.answerbody,
+        'date', TO_CHAR(TO_TIMESTAMP(answers.currentdate / 1000), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+        'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
+        'helpfulness', answers.helpfulness,
+        'photos', COALESCE((SELECT json_agg(json_build_object('id', photos.photoid, 'url', photos.photourl) FROM photos WHERE photos.answerID = answers.answerID), '[]')
+      ))) FROM answers WHERE answers.questionid = questions.questionid), '{}')
+      ))
+      FROM questions WHERE productID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`
+)
+return answersData.rows[0].json_agg;
+
+
+
+ /* -------------------FAST BUT USES JAVASCRIPT----------------- */
+  // const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
+  // if (method === "questions") {
+  //   let answersContainer = {};
+  //     for (let i = 0; i < answersData.rows.length; i++) {
+  //       let currentRow = answersData.rows[i];
+  //       let photosList = await getPhotos(currentRow.answerid, method);
+  //       answersContainer[currentRow.answerid] = {
+  //         id: currentRow.answerid,
+  //         body: currentRow.answerbody,
+  //         date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //         answerer_name: currentRow.username,
+  //         helpfulness: currentRow.helpfulness,
+  //         photos: photosList
+  //       }
+  //     }
+  //     return answersContainer;
+  // } else if (method === "answers") {
+  //   let answersContainer = [];
+  //   for (let i = 0; i < answersData.rows.length; i++) {
+  //     let currentRow = answersData.rows[i];
+  //     let photosList = await getPhotos(currentRow.answerid, method);
+  //     answersContainer.push({
+  //       answer_id: currentRow.answerid,
+  //       body: currentRow.answerbody,
+  //       date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //       answerer_name: currentRow.username,
+  //       helpfulness: currentRow.helpfulness,
+  //       photos: photosList
+  //     })
+  //   }
+  //   return answersContainer;
+  // }
+/* -------------------FAST BUT USES JAVASCRIPT----------------- */
 };
 
 //Gets all questions for product ids, calls for answers and photos as well
