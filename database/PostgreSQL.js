@@ -24,23 +24,23 @@ async function insertPhotos (answerid, photos) {
 }
 
 //Get photos. 1 format for answers and another for questions
-// async function getPhotos (answerID, method) {
-//   const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
-//   let photosContainer = [];
-//   if (method === "questions") {
-//     for (let i = 0; i < photosData.rows.length; i++) {
-//       photosContainer.push(photosData.rows[i].photourl)
-//     }
-//   } else if (method === "answers") {
-//     for (let i = 0; i < photosData.rows.length; i++) {
-//       photosContainer.push({
-//           id: photosData.rows[i].photoid,
-//           url: photosData.rows[i].photourl
-//         });
-//     }
-//   }
-//   return photosContainer;
-// };
+async function getPhotos (answerID, method) {
+  const photosData = await pool.query("SELECT * FROM Photos WHERE AnswerID = $1", [answerID])
+  let photosContainer = [];
+  if (method === "questions") {
+    for (let i = 0; i < photosData.rows.length; i++) {
+      photosContainer.push(photosData.rows[i].photourl)
+    }
+  } else if (method === "answers") {
+    for (let i = 0; i < photosData.rows.length; i++) {
+      photosContainer.push({
+          id: photosData.rows[i].photoid,
+          url: photosData.rows[i].photourl
+        });
+    }
+  }
+  return photosContainer;
+};
 
 //Gets answers for question id. 2 formats. 1 for when questions format is called and 1 for answer api format. Calls photos
 async function getAnswers (questionID, method, count, page) {
@@ -50,40 +50,39 @@ async function getAnswers (questionID, method, count, page) {
   if (!page) {
     page = 1;
   }
+
   const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
-  return answersData;
-  // const answersData = await pool.query("SELECT * FROM Answers INNER JOIN Users ON Answers.UserID = Users.UserID WHERE QuestionID = $1 LIMIT $2 OFFSET $3", [questionID, count, (page-1)*count])
-  // if (method === "questions") {
-  //   let answersContainer = {};
-  //     for (let i = 0; i < answersData.rows.length; i++) {
-  //       let currentRow = answersData.rows[i];
-  //       let photosList = await getPhotos(currentRow.answerid, method);
-  //       answersContainer[currentRow.answerid] = {
-  //         id: currentRow.answerid,
-  //         body: currentRow.answerbody,
-  //         date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-  //         answerer_name: currentRow.username,
-  //         helpfulness: currentRow.helpfulness,
-  //         photos: photosList
-  //       }
-  //     }
-  //     return answersContainer;
-  // } else if (method === "answers") {
-  //   let answersContainer = [];
-  //   for (let i = 0; i < answersData.rows.length; i++) {
-  //     let currentRow = answersData.rows[i];
-  //     let photosList = await getPhotos(currentRow.answerid, method);
-  //     answersContainer.push({
-  //       answer_id: currentRow.answerid,
-  //       body: currentRow.answerbody,
-  //       date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-  //       answerer_name: currentRow.username,
-  //       helpfulness: currentRow.helpfulness,
-  //       photos: photosList
-  //     })
-  //   }
-  //   return answersContainer;
-  // }
+  if (method === "questions") {
+    let answersContainer = {};
+      for (let i = 0; i < answersData.rows.length; i++) {
+        let currentRow = answersData.rows[i];
+        let photosList = await getPhotos(currentRow.answerid, method);
+        answersContainer[currentRow.answerid] = {
+          id: currentRow.answerid,
+          body: currentRow.answerbody,
+          date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+          answerer_name: currentRow.username,
+          helpfulness: currentRow.helpfulness,
+          photos: photosList
+        }
+      }
+      return answersContainer;
+  } else if (method === "answers") {
+    let answersContainer = [];
+    for (let i = 0; i < answersData.rows.length; i++) {
+      let currentRow = answersData.rows[i];
+      let photosList = await getPhotos(currentRow.answerid, method);
+      answersContainer.push({
+        answer_id: currentRow.answerid,
+        body: currentRow.answerbody,
+        date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+        answerer_name: currentRow.username,
+        helpfulness: currentRow.helpfulness,
+        photos: photosList
+      })
+    }
+    return answersContainer;
+  }
 };
 
 //Gets all questions for product ids, calls for answers and photos as well
@@ -94,55 +93,27 @@ async function getQuestions (productID, count, page, method) {
   if (!page) {
     page = 1;
   }
+
   const questionsData = await pool.query(
-    `SELECT json_build_object(
-      'product_id', ${productID},
-      'results', (WITH result AS (SELECT * FROM questions WHERE productID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count})
-        SELECT json_agg(json_build_object(
-          'question_id', result.questionid,
-          'question_body', result.questionbody,
-          'question_date', result.currentdate,
-          'asker_name', (SELECT username FROM Users, result WHERE Users.userid = questions.userid),
-          'question_helpfulness', result.helpfulness,
-          'reported', result.reported,
-          'answers', json_object_agg(SELECT json_object_agg(answers.answerid, json_build_object(
+        `SELECT json_agg(json_build_object(
+          'question_id', questions.questionid,
+          'question_body', questions.questionbody,
+          'question_date', TO_CHAR(TO_TIMESTAMP(questions.currentdate / 1000), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+          'asker_name', (SELECT username FROM users WHERE userid = questions.userid),
+          'question_helpfulness', questions.helpfulness,
+          'reported', questions.reported::int::boolean,
+          'answers', COALESCE((SELECT (json_object_agg(answers.answerid, json_build_object(
             'id', answers.answerid,
-            'body', answers.body,
-            'date', answers.currentdate,
-            'answerer_name', (SELECT username FROM Users, answers WHERE Users.userid = answers.userid),
+            'body', answers.answerbody,
+            'date', TO_CHAR(TO_TIMESTAMP(answers.currentdate / 1000), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+            'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
             'helpfulness', answers.helpfulness,
-            'photos', json_agg()
-          )))
-        )
-      )
-    )
-    FROM questions
-    LEFT JOIN (
-      SELECT answers.questionId, json_object_agg(
-        answers.answerid, json_build_object(
-          'id', answers.answerid,
-          'body', answers.answerbody,
-          'date', answers.currentdate,
-          'answerer_name', answers.userid,
-          'helpfulness', answers.helpfulness,
-          'photos', photosList
-        )
-      ) AS answerList
-      FROM answers
-      LEFT JOIN (
-        SELECT photos.answerid, json_agg(
-            photos.photourl
-        ) AS photosList
-        FROM photos GROUP BY 1
-        )
-        photos ON photos.answerid = answers.answerid GROUP BY 1
-        )
-      answers ON answers.questionid = questions.questionid
-      WHERE questions.ProductID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`);
-
-  return questionsData
-
-
+            'photos', COALESCE((SELECT json_agg(photos.photourl) FROM photos WHERE photos.answerID = answers.answerID), '[]')
+          ))) FROM answers WHERE answers.questionid = questions.questionid), '{}')
+          ))
+          FROM questions WHERE productID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`
+  )
+  return questionsData.rows[0].json_agg;
 
     /*--------------DO NOT USE. REALLY SLOW FORMAT----------
     `SELECT json_build_object(
@@ -193,24 +164,24 @@ async function getQuestions (productID, count, page, method) {
   -------------------SLOW JSON FORMAT -----------------*/
 
 
-  /*-------------------FAST BUT USES JAVASCRIPT-----------------
-  const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
-  let questionsContainer = [];
-      for (let i = 0; i < questionsData.rows.length; i++) {
-        let currentRow = questionsData.rows[i];
-        let answersList = await getAnswers(currentRow.questionid, method);
-        questionsContainer.push({
-          question_id: currentRow.questionid,
-          question_body: currentRow.questionbody,
-          question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
-          asker_name: currentRow.username,
-          question_helpfulness: currentRow.helpfulness,
-          reported: !!currentRow.reported,
-          answers: answersList
-        })
-      }
-  return questionsContainer;
-  -----------------------FAST BUT USES JAVASCRIPT------------*/
+  /*-------------------FAST BUT USES JAVASCRIPT-----------------*/
+  // const questionsData = await pool.query("SELECT * FROM Questions INNER JOIN Users ON Questions.UserID = Users.UserID WHERE ProductID = $1 LIMIT $2 OFFSET $3", [productID, count, (page-1)*count])
+  // let questionsContainer = [];
+  //     for (let i = 0; i < questionsData.rows.length; i++) {
+  //       let currentRow = questionsData.rows[i];
+  //       let answersList = await getAnswers(currentRow.questionid, method);
+  //       questionsContainer.push({
+  //         question_id: currentRow.questionid,
+  //         question_body: currentRow.questionbody,
+  //         question_date: new Date(parseInt(currentRow.currentdate)).toISOString(),
+  //         asker_name: currentRow.username,
+  //         question_helpfulness: currentRow.helpfulness,
+  //         reported: !!currentRow.reported,
+  //         answers: answersList
+  //       })
+  //     }
+  // return questionsContainer;
+  /*-----------------------FAST BUT USES JAVASCRIPT------------*/
 };
 
 //Posts question to database

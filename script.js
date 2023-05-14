@@ -15,13 +15,13 @@ export const options = {
       //How long test runs
       duration: '1m',
       //Rate per timeUnit
-      rate: 1000,
+      rate: 2000,
       //Time Unit
       timeUnit: '1s',
       //Initial Virtual Users
       preAllocatedVUs: 2,
       //Max Virtual Users
-      maxVUs: 1100
+      maxVUs: 4000
     }
   }
 }
