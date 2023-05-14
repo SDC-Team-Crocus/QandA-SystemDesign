@@ -56,7 +56,7 @@ async function getAnswers (questionID, count, page) {
   /* Fastest Method Using PostGreSql */
   const answersData = await pool.query(
     `SELECT COALESCE((SELECT json_agg(json_build_object(
-        'id', answers.answerid,
+        'answer_id', answers.answerid,
         'body', answers.answerbody,
         'date', TO_CHAR(TO_TIMESTAMP(answers.currentdate / 1000), 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
         'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
