@@ -15,15 +15,14 @@ App.get('/qa/questions', (req, res) => {
   .then(data => {
     let returnedData = {product_id: req.query.product_id, results: data}
     res.status(200).send(returnedData)})
-  .catch(err => {
-    console.log(err);res.sendStatus(404)});
+  .catch(err => {res.sendStatus(404)});
 });
 
 //Answer List - Params: question_id  Query param: page, count
 App.get('/qa/questions/:question_id/answers', (req, res) => {
   getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
   .then(data => {
-    let returnedData = {question: req.params.question_id, page: req.query.page, count: req.query.count, results: data}
+    let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 });
