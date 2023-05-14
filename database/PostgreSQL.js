@@ -62,7 +62,7 @@ async function getAnswers (questionID, count, page) {
         'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
         'helpfulness', answers.helpfulness,
         'photos', COALESCE((SELECT json_agg(json_build_object('id', photos.photoid, 'url', photos.photourl)) FROM photos WHERE photos.answerID = answers.answerID), '[]')
-      )) FROM answers WHERE answers.questionid = ${questionID} LIMIT ${count} OFFSET ${(page-1)*count}), '[]')`
+      )) FROM answers WHERE answers.questionid = ${questionID} AND answers.reported = 0 LIMIT ${count} OFFSET ${(page-1)*count}), '[]')`
   )
 return answersData.rows[0].coalesce;
 
@@ -130,9 +130,9 @@ async function getQuestions (productID, count, page) {
             'answerer_name', (SELECT username FROM users WHERE userid = answers.userid),
             'helpfulness', answers.helpfulness,
             'photos', COALESCE((SELECT json_agg(photos.photourl) FROM photos WHERE photos.answerID = answers.answerID), '[]')
-          ))) FROM answers WHERE answers.questionid = questions.questionid), '{}')
+          ))) FROM answers WHERE answers.questionid = questions.questionid AND answers.reported = 0), '{}')
           ))
-          FROM questions WHERE productID = ${productID} LIMIT ${count} OFFSET ${(page-1)*count}`
+          FROM questions WHERE productID = ${productID} AND questions.reported = 0 LIMIT ${count} OFFSET ${(page-1)*count}`
   )
   return questionsData.rows[0].json_agg;
 
