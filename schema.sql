@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS Photos(
   -- SELECT id, url, (SELECT AnswerID FROM Answers WHERE Answers.AnswerID = photosData.answer_id) AS AnswerID FROM photosData;
 
   -- CREATING INDICES FOR TABLES --
-  -- CREATE INDEX productid_idx ON Questions(ProductID);
-  -- CREATE INDEX answerid_idx ON Photos(AnswerID);
-  -- CREATE INDEX userid_q_idx ON Questions(UserID);
-  -- CREATE INDEX userid_a_idx ON Answers(UserID);
-  -- CREATE INDEX questionid_idx ON Answers(QuestionID);
+  CREATE INDEX productid_idx ON Questions(ProductID);
+  CREATE INDEX answerid_idx ON Photos(AnswerID);
+  CREATE INDEX userid_q_idx ON Questions(UserID);
+  CREATE INDEX userid_a_idx ON Answers(UserID);
+  CREATE INDEX questionid_idx ON Answers(QuestionID);
