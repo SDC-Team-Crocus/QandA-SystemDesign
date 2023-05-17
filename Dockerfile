@@ -19,4 +19,4 @@ COPY . .
 # Docker to listen to port on run time
 EXPOSE 3001
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "server-dev" ]
