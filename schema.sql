@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Questions(
   QuestionID SERIAL NOT NULL PRIMARY KEY,
   QuestionBody TEXT NOT NULL,
   CurrentDate BIGINT NOT NULL,
-  Helpfulness SERIAL NOT NULL DEFAULT 0,
+  Helpfulness SERIAL NOT NULL,
   Reported SMALLINT NOT NULL DEFAULT 0,
   UserID INTEGER REFERENCES Users(UserID),
   ProductID INTEGER REFERENCES Products(ProductID)
@@ -26,9 +26,8 @@ CREATE TABLE IF NOT EXISTS Questions(
 CREATE TABLE IF NOT EXISTS Answers(
   AnswerID SERIAL NOT NULL PRIMARY KEY,
   AnswerBody TEXT NOT NULL,
-  UserID INTEGER NOT NULL,
   CurrentDate BIGINT NOT NULL,
-  Helpfulness SERIAL NOT NULL DEFAULT 0,
+  Helpfulness SERIAL NOT NULL,
   Reported SMALLINT NOT NULL DEFAULT 0,
   UserID INTEGER REFERENCES Users(UserID),
   QuestionID INTEGER REFERENCES Questions(QuestionID)
@@ -40,6 +39,53 @@ CREATE TABLE IF NOT EXISTS Photos(
   AnswerID INTEGER REFERENCES Answers(AnswerID)
 );
 
+  -- CREATING TABLES BASED ON CSV DATA --
+
+  -- CREATE TABLE IF NOT EXISTS questionData(
+  --   id INTEGER,
+  --   product_id INTEGER,
+  --   body TEXT,
+  --   date_written BIGINT,
+  --   asker_name VARCHAR(30),
+  --   asker_email VARCHAR(40),
+  --   reported INTEGER,
+  --   helpful INTEGER
+  -- );
+
+  -- CREATE TABLE IF NOT EXISTS answerData(
+  --   id INTEGER,
+  --   question_id INTEGER,
+  --   body TEXT,
+  --   date_written BIGINT,
+  --   answerer_name VARCHAR(30),
+  --   answerer_email VARCHAR(40),
+  --   reported INTEGER,
+  --   helpful INTEGER
+  -- );
+
+  -- CREATE TABLE IF NOT EXISTS photosData(
+  --   id INTEGER,
+  --   answer_id INTEGER,
+  --   url TEXT
+  -- );
+
+  -- STEPS TO TRANSFER DATA --
+COPY questionData
+FROM '/location'
+DELIMITER ','
+CSV HEADER;
+
+COPY answerData
+FROM '/location'
+DELIMITER ','
+CSV HEADER;
+
+COPY photosData
+FROM '/location'
+DELIMITER ','
+CSV HEADER;
+
+INSERT INTO Products (ProductID) SELECT product_id FROM questionData;
 
   -- TRANSFERRING DATA INTO DESIGNED SCHEMA --
 
