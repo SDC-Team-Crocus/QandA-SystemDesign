@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Photos(
   AnswerID INTEGER REFERENCES Answers(AnswerID)
 );
 
-  -- CREATING TABLES BASED ON CSV DATA --
+  -- **CREATING TABLES BASED ON CSV DATA** --
 
   -- CREATE TABLE IF NOT EXISTS questionData(
   --   id INTEGER,
@@ -69,38 +69,59 @@ CREATE TABLE IF NOT EXISTS Photos(
   --   url TEXT
   -- );
 
-  -- STEPS TO TRANSFER DATA --
-COPY questionData
-FROM '/location'
-DELIMITER ','
-CSV HEADER;
+  -- **STEPS TO TRANSFER DATA** --
 
-COPY answerData
-FROM '/location'
-DELIMITER ','
-CSV HEADER;
+  -- COPY questionData FROM '/home/ubuntu/questions.csv' DELIMITER ',' CSV HEADER;
 
-COPY photosData
-FROM '/location'
-DELIMITER ','
-CSV HEADER;
+  -- COPY answers (answerid, questionid, answerbody, currentdate, answerer_name, answerer_email, reported, helpfulness) FROM '/home/ubuntu/answers.csv' DELIMITER ',' CSV HEADER;
 
-INSERT INTO Products (ProductID) SELECT product_id FROM questionData;
+  -- COPY photosData FROM '/home/ubuntu/answers_photos.csv' DELIMITER ',' CSV HEADER;
 
-  -- TRANSFERRING DATA INTO DESIGNED SCHEMA --
+  -- **SEND DATA TO AWS INSTANC** --
+  -- $scp -i ~/Documents/HackReactorSR/AWS-SDC/dbms.pem ~/Documents/HackReactorSR/atelier-dataset/questions.csv  ubuntu@AWSADDRESSHERE:/home/ubuntu
+  -- $scp -i ~/Documents/HackReactorSR/AWS-SDC/dbms.pem ~/Documents/HackReactorSR/atelier-dataset/answers.csv  ubuntu@AWSADDRESSHERE:/home/ubuntu
+  -- $scp -i ~/Documents/HackReactorSR/AWS-SDC/dbms.pem ~/Documents/HackReactorSR/atelier-dataset/answers_photos.csv  ubuntu@AWSADDRESSHERE:/home/ubuntu
 
-  -- INSERT INTO Questions (QuestionID, QuestionBody, CurrentDate, Helpfulness, Reported, UserID, ProductID)
-  -- SELECT id, body, date, helpful, reported, (SELECT UserID FROM Users WHERE Users.UserName = questionData.asker_name) AS UserID, product_id FROM questionData;
+  -- **TRANSFERRING DATA INTO DESIGNED SCHEMA** --
 
-  -- INSERT INTO Answers (AnswerID, AnswerBody, CurrentDate, Helpfulness, Reported, UserID, QuestionID)
-  -- SELECT id, body, date_written, helpful, reported, (SELECT UserID FROM Users WHERE Users.UserName = answerData.answerer_name) AS UserID, question_id FROM answerData;
+  -- INSERT INTO Products (ProductID) SELECT product_id FROM questionData ON CONFLICT (productid) DO NOTHING;
+  -- INSERT INTO Users (UserName, Email) SELECT asker_name, asker_email FROM questionData ON CONFLICT (UserName) DO NOTHING;
+  -- INSERT INTO Users (UserName, Email) SELECT answerer_name, answerer_email FROM answerData ON CONFLICT (UserName) DO NOTHING;
 
-  -- INSERT INTO Photos (PhotoID, PhotoURL, AnswerID)
-  -- SELECT id, url, (SELECT AnswerID FROM Answers WHERE Answers.AnswerID = photosData.answer_id) AS AnswerID FROM photosData;
+  INSERT INTO Questions (QuestionID, QuestionBody, CurrentDate, Helpfulness, Reported, UserID, ProductID) SELECT id, body, date_written, helpful, reported, (SELECT UserID FROM Users WHERE Users.UserName = questionData.asker_name) AS UserID, product_id FROM questionData;
 
-  -- CREATING INDICES FOR TABLES --
+  -- **ORIGINAL QUERY THAT WORKS ON LOCAL BUT NOT ON EC2 INSTANCE** --
+  INSERT INTO Answers (answerid, answerBody, currentdate, helpfulness, reported, UserID, QuestionID)
+  SELECT id, body, date_written, helpful, reported, (SELECT userid FROM Users WHERE users.UserName = answerdata.answerer_name), question_id FROM answerdata;
+
+  -- **IMPROVED QUERY THAT WORKS ON EC2 INSTANCE** --
+  INSERT INTO Answers (answerid, answerBody, currentdate, helpfulness, reported, UserID, QuestionID)
+  SELECT c.id, c.body, c.date_written, c.helpful, c.reported, c.userid, c.question_id FROM (SELECT * FROM answerdata INNER JOIN users ON answerdata.answerer_name = users.username) c;
+
+  INSERT INTO Photos (PhotoID, PhotoURL, AnswerID) SELECT id, url, (SELECT AnswerID FROM Answers WHERE Answers.AnswerID = photosData.answer_id) AS AnswerID FROM photosData;
+
+  -- **IMPROVED QUERY DIDN'T GET TO TEST** --
+  INSERT INTO Photos (PhotoID, PhotoURL, AnswerID) SELECT pa.id, pa.url, pa.answerid FROM (SELECT answers.answerid,  FROM answers INNER JOIN photosdata ON photosdata.answer_id = answers.answerid ON CONFLICT DO NOTHING) pa;
+
+  -- **CREATING INDICES FOR TABLES** --
   CREATE INDEX productid_idx ON Questions(ProductID);
   CREATE INDEX answerid_idx ON Photos(AnswerID);
   CREATE INDEX userid_q_idx ON Questions(UserID);
   CREATE INDEX userid_a_idx ON Answers(UserID);
   CREATE INDEX questionid_idx ON Answers(QuestionID);
+  CREATE INDEX username_idx ON Users(Username);
+
+-- **FAILED QUERIES TO TRY TO UPDATE USERID COLUMN FOR ALL ROWS** --
+
+-- UPDATE answers SET userid = (SELECT users.userid FROM users WHERE users.username = answers.answerer_name) WHERE answers.answerer_name IS NOT NULL;
+
+-- UPDATE answers a SET userid = c.userid FROM
+-- (SELECT u.userid, u.username FROM users) c WHERE a.answerer_name = c.username;
+
+-- UPDATE answers SET userid = users.userid FROM users WHERE answers.answerer_name = users.username;
+
+-- UPDATE answers a, users u SET a.userid = u.userid WHERE a.answerer_name = u.username;
+
+-- UPDATE answers a SET userid = u.userid FROM users u WHERE u.username = a.answerer_name;
+
+-- UPDATE answers SET userid = u.userid FROM (SELECT userid, username FROM users) AS u WHERE u.username = answers.answerer_name;
