@@ -1,11 +1,11 @@
 const { Pool } = require('pg');
 
 const login = {
-  user: "",
+  user: "postgres",
   host: "localhost",
   database: "qanda",
   password: "",
-  port: 5432 //Default psql port
+  port: 172.31.23.130:5432 //Default psql port
 }
 
 const pool = new Pool(login);
