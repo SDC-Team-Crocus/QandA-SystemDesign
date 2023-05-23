@@ -1,8 +1,11 @@
 const express = require('express');
 const path = require('path');
-const redis = require('redis');
+const { createClient } = require('redis');
 
-const client = redis.createClient();
+const client = createClient();
+
+client.connect();
+
 
 const port = 3001;
 const { getQuestions, getAnswers, postQuestion, postAnswer, markHelpful, report } = require('../database/PostgreSQL');
@@ -14,22 +17,21 @@ App.use(express.json());
 // console.log(req.body.params); //Access body params
 
 //List Questions - Params: product_id, page, count
-App.get('/qa/questions', (req, res) => {
-  client.get(parseInt(req.query.product_id), (err, result) => {
-    if (result) {
-      res.send(result);
-    } else {
-      getQuestions(req, res);
-    }
-  });
+App.get('/qa/questions', async (req, res) => {
+  let result = await client.get(req.query.product_id);
+  if (result) {
+    res.status(200).send(JSON.parse(result));
+  } else {
+    getDBQuestions(req, res);
+  }
 });
 
 //Get request if data is NOT in Redis
-function getQuestions (req, res) {
+function getDBQuestions (req, res) {
   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
   .then(data => {
     let returnedData = {product_id: req.query.product_id, results: data}
-    client.setex(parseInt(req.query.product_id), 600, JSON.stringify(returnedData));
+    client.set(req.query.product_id, JSON.stringify(returnedData));
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 }
