@@ -15,7 +15,13 @@ App.use(express.json());
 
 //List Questions - Params: product_id, page, count
 App.get('/qa/questions', (req, res) => {
-
+  client.get(parseInt(req.query.product_id), (err, result) => {
+    if (result) {
+      res.send(result);
+    } else {
+      getQuestions(req, res);
+    }
+  });
 });
 
 //Get request if data is NOT in Redis
@@ -23,7 +29,7 @@ function getQuestions (req, res) {
   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
   .then(data => {
     let returnedData = {product_id: req.query.product_id, results: data}
-    client.setex(returnedData, 600, JSON.stringify(returnedData));
+    client.setex(parseInt(req.query.product_id), 600, JSON.stringify(returnedData));
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 }
