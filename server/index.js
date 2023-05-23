@@ -98,6 +98,10 @@ App.put('/qa/answers/:answer_id/report', (req, res) => {
   .catch(err => {res.sendStatus(501)});
 });
 
+App.get('/loaderio-30147497dee01a49d4ca3b2ea92b5250', (req, res) => {
+  res.send('loaderio-30147497dee01a49d4ca3b2ea92b5250');
+})
+
 App.listen(port, () => {
   console.log(`Listening to port: ${port}`);
 });
