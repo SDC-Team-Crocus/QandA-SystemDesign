@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const redis = require('redis');
+const client = redis.createClient();
 const port = 3001;
 const { getQuestions, getAnswers, postQuestion, postAnswer, markHelpful, report } = require('../database/PostgreSQL');
 
