@@ -18,7 +18,7 @@ App.use(express.json());
 
 //List Questions - Params: product_id, page, count
 App.get('/qa/questions', async (req, res) => {
-  let result = await client.get(req.query.product_id);
+  let result = await client.get(`product:${req.query.product_id}`);
   if (result) {
     res.status(200).send(JSON.parse(result));
   } else {
@@ -26,24 +26,35 @@ App.get('/qa/questions', async (req, res) => {
   }
 });
 
-//Get request if data is NOT in Redis
+//Get request if Questions data is NOT in Redis
 function getDBQuestions (req, res) {
   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then(data => {
+  .then(async(data) => {
     let returnedData = {product_id: req.query.product_id, results: data}
-    client.set(req.query.product_id, JSON.stringify(returnedData));
+    await client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 }
 
 //Answer List - Params: question_id  Query param: page, count
-App.get('/qa/questions/:question_id/answers', (req, res) => {
+App.get('/qa/questions/:question_id/answers', async (req, res) => {
+  let result = await client.get(`question:${req.params.question_id}`);
+  if (result) {
+    res.status(200).send(JSON.parse(result));
+  } else {
+    getDBAnswers(req, res);
+  }
+});
+
+//Get request if Answers data is NOT in Redis
+async function getDBAnswers (req, res) {
   getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then(data => {
+  .then(async (data) => {
     let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
+    await client.set(`question:${req.params.question_id}`, JSON.stringify(returnedData));
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
-});
+}
 
 //Add Question - Body params: body, name, email, product_id
 App.post('/qa/questions', (req, res) => {
