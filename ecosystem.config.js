@@ -1,4 +1,4 @@
-// //PM2 Config
+//PM2 Config
 
 module.exports = {
   apps : [{
