@@ -8,6 +8,15 @@ const login = {
   port: 5432
 };
 
+// LOCAL INFO FOR LOCAL TESTING
+// const login = {
+//   user: "",
+//   host: "localhost",
+//   database: "qanda",
+//   password: "",
+//   port: 5432
+// };
+
 const pool = new Pool(login);
 pool.connect();
 
