@@ -36,6 +36,15 @@ function getDBQuestions (req, res) {
   .catch(err => {res.sendStatus(404)});
 }
 
+//List Questions WITHOUT REDIS - Params: product_id, page, count
+// App.get('/qa/questions', (req, res) => {
+//   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
+//   .then((data) => {
+//     let returnedData = {product_id: req.query.product_id, results: data}
+//     res.status(200).send(returnedData)})
+//   .catch(err => {res.sendStatus(404)});
+// });
+
 //Answer List - Params: question_id  Query param: page, count
 App.get('/qa/questions/:question_id/answers', async (req, res) => {
   let result = await client.get(`question:${req.params.question_id}`);
@@ -55,6 +64,15 @@ async function getDBAnswers (req, res) {
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 }
+
+//Answer List WITHOUT Redis - Params: question_id  Query param: page, count
+// App.get('/qa/questions/:question_id/answers', (req, res) => {
+//   getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
+//   .then((data) => {
+//     let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
+//     res.status(200).send(returnedData)})
+//   .catch(err => {res.sendStatus(404)});
+// });
 
 //Add Question - Body params: body, name, email, product_id
 App.post('/qa/questions', (req, res) => {
