@@ -32,6 +32,7 @@ function getDBQuestions (req, res) {
   .then(async(data) => {
     let returnedData = {product_id: req.query.product_id, results: data}
     await client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
+    console.log('here');
     res.status(200).send(returnedData)})
   .catch(err => {console.log(err); res.sendStatus(404)});
 }
