@@ -19,7 +19,8 @@ App.use(express.json());
 App.get('/qa/questions', async (req, res) => {
   let result = await client.get(`product:${req.query.product_id}`);
   if (result) {
-    res.status(200).send(JSON.parse(result));
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(result);
   } else {
     getDBQuestions(req, res);
   }
@@ -28,9 +29,10 @@ App.get('/qa/questions', async (req, res) => {
 //Get request if Questions data is NOT in Redis
 function getDBQuestions (req, res) {
   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then(async(data) => {
+  .then((data) => {
     let returnedData = {product_id: req.query.product_id, results: data}
-    await client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
+    client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).send(returnedData)})
   .catch(err => {console.log(err); res.sendStatus(404)});
 }
@@ -48,6 +50,7 @@ function getDBQuestions (req, res) {
 App.get('/qa/questions/:question_id/answers', async (req, res) => {
   let result = await client.get(`question:${req.params.question_id}`);
   if (result) {
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).send(JSON.parse(result));
   } else {
     getDBAnswers(req, res);
@@ -57,9 +60,10 @@ App.get('/qa/questions/:question_id/answers', async (req, res) => {
 //Get request if Answers data is NOT in Redis
 async function getDBAnswers (req, res) {
   getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then(async (data) => {
+  .then((data) => {
     let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
-    await client.set(`question:${req.params.question_id}`, JSON.stringify(returnedData));
+    client.set(`question:${req.params.question_id}`, JSON.stringify(returnedData));
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
 }
