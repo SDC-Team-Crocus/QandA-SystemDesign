@@ -33,7 +33,7 @@ function getDBQuestions (req, res) {
     let returnedData = {product_id: req.query.product_id, results: data}
     await client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
     res.status(200).send(returnedData)})
-  .catch(err => {res.sendStatus(404)});
+  .catch(err => {console.log(err); res.sendStatus(404)});
 }
 
 // // List Questions WITHOUT REDIS - Params: product_id, page, count
