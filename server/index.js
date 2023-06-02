@@ -119,8 +119,8 @@ App.put('/qa/answers/:answer_id/report', (req, res) => {
   .catch(err => {res.sendStatus(501)});
 });
 
-App.get('/loaderio-c0412b20783ac958e07235b747d164b2', (req, res) => {
-  res.send('loaderio-c0412b20783ac958e07235b747d164b2');
+App.get('/loaderio-ed5cc0ed33491bdb062f58a3161c7403', (req, res) => {
+  res.send('loaderio-ed5cc0ed33491bdb062f58a3161c7403');
 })
 
 App.listen(port, () => {
