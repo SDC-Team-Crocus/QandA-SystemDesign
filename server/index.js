@@ -1,10 +1,10 @@
 const express = require('express');
 const path = require('path');
-const { createClient } = require('redis');
+// const { createClient } = require('redis');
 
-const client = createClient();
+// const client = createClient();
 
-client.connect();
+// client.connect();
 
 const port = 3001;
 const { getQuestions, getAnswers, postQuestion, postAnswer, markHelpful, report } = require('../database/PostgreSQL');
@@ -15,67 +15,67 @@ App.use(express.json());
 // console.log(req.query); //Access URL params
 // console.log(req.body.params); //Access body params
 
-//List Questions - Params: product_id, page, count
-App.get('/qa/questions', async (req, res) => {
-  let result = await client.get(`product:${req.query.product_id}`);
-  if (result) {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(result);
-  } else {
-    getDBQuestions(req, res);
-  }
-});
+// //List Questions - Params: product_id, page, count
+// App.get('/qa/questions', async (req, res) => {
+//   let result = await client.get(`product:${req.query.product_id}`);
+//   if (result) {
+//     res.setHeader('Content-Type', 'application/json');
+//     res.status(200).send(result);
+//   } else {
+//     getDBQuestions(req, res);
+//   }
+// });
 
-//Get request if Questions data is NOT in Redis
-function getDBQuestions (req, res) {
-  getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
-  .then((data) => {
-    let returnedData = {product_id: req.query.product_id, results: data}
-    client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(returnedData)})
-  .catch(err => {console.log(err); res.sendStatus(404)});
-}
-
-// // List Questions WITHOUT REDIS - Params: product_id, page, count
-// App.get('/qa/questions', (req, res) => {
+// //Get request if Questions data is NOT in Redis
+// function getDBQuestions (req, res) {
 //   getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
 //   .then((data) => {
 //     let returnedData = {product_id: req.query.product_id, results: data}
+//     client.set(`product:${req.query.product_id}`, JSON.stringify(returnedData));
+//     res.setHeader('Content-Type', 'application/json');
 //     res.status(200).send(returnedData)})
-//   .catch(err => {res.sendStatus(404)});
-// });
+//   .catch(err => {console.log(err); res.sendStatus(404)});
+// }
 
-//Answer List - Params: question_id  Query param: page, count
-App.get('/qa/questions/:question_id/answers', async (req, res) => {
-  let result = await client.get(`question:${req.params.question_id}`);
-  if (result) {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(JSON.parse(result));
-  } else {
-    getDBAnswers(req, res);
-  }
-});
-
-//Get request if Answers data is NOT in Redis
-async function getDBAnswers (req, res) {
-  getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
+// List Questions WITHOUT REDIS - Params: product_id, page, count
+App.get('/qa/questions', (req, res) => {
+  getQuestions(parseInt(req.query.product_id), parseInt(req.query.count), parseInt(req.query.page))
   .then((data) => {
-    let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
-    client.set(`question:${req.params.question_id}`, JSON.stringify(returnedData));
-    res.setHeader('Content-Type', 'application/json');
+    let returnedData = {product_id: req.query.product_id, results: data}
     res.status(200).send(returnedData)})
   .catch(err => {res.sendStatus(404)});
-}
+});
 
-// //Answer List WITHOUT Redis - Params: question_id  Query param: page, count
-// App.get('/qa/questions/:question_id/answers', (req, res) => {
+// //Answer List - Params: question_id  Query param: page, count
+// App.get('/qa/questions/:question_id/answers', async (req, res) => {
+//   let result = await client.get(`question:${req.params.question_id}`);
+//   if (result) {
+//     res.setHeader('Content-Type', 'application/json');
+//     res.status(200).send(JSON.parse(result));
+//   } else {
+//     getDBAnswers(req, res);
+//   }
+// });
+
+// //Get request if Answers data is NOT in Redis
+// async function getDBAnswers (req, res) {
 //   getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
 //   .then((data) => {
 //     let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
+//     client.set(`question:${req.params.question_id}`, JSON.stringify(returnedData));
+//     res.setHeader('Content-Type', 'application/json');
 //     res.status(200).send(returnedData)})
 //   .catch(err => {res.sendStatus(404)});
-// });
+// }
+
+//Answer List WITHOUT Redis - Params: question_id  Query param: page, count
+App.get('/qa/questions/:question_id/answers', (req, res) => {
+  getAnswers(parseInt(req.params.question_id), parseInt(req.query.count), parseInt(req.query.page))
+  .then((data) => {
+    let returnedData = {question: req.params.question_id, page: req.query.page || 0, count: req.query.count || 5, results: data}
+    res.status(200).send(returnedData)})
+  .catch(err => {res.sendStatus(404)});
+});
 
 //Add Question - Body params: body, name, email, product_id
 App.post('/qa/questions', (req, res) => {
