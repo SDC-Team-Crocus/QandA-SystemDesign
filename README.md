@@ -9,9 +9,10 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
 2. [API Routing](#API-Routing)
 3. [Optimizations Implemented](#Optimizations-Implemented)
-4. [Setup](#Setup)
+4. [Installation](#Installation)
 5. [Contributors](#Contributors)
-6. [License](#License)
+6. [Deployed API](#Deployed-API)
+7. [License](#License)
 
 ## PostgreSQL Schema
 
@@ -24,37 +25,29 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/6f3a936b-7552-4824-bc8b-25a79bd24286)
 
 
-
-
 ## API Routing
-### Shopping Cart
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+### 
+-
 
 ## Optimizations Implemented
 ### Database Indexing
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/58c5b380-e276-43c4-811b-41c16d544fa2)
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3a7d07c5-3d90-4426-ba5b-9d6644c07d29)
 
 ### PostgreSQL Refactoring
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- 
 
 ### NGINX Load Balancing
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- 
 
 ### Redis Caching
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- 
 
 ### PM2 Clustering
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- 
 
 ### Multi Server Deployment
-- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
-- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+- 
 
 ## Installation
 
@@ -63,6 +56,10 @@ Use the package manager [npm](https://docs.npmjs.com/) to install necessary depe
 ```bash
 npm install
 ```
+Install the following necessary databases to your machine.:
+
+Documentation for PostgreSQL can be found [here](https://www.postgresql.org/download/).
+Documentation for Redis can be found [here](https://redis.io/download/#redis-downloads).
 
 ## Deployed API
 
