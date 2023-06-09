@@ -26,8 +26,9 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 
 
 ## API Routing
-### 
--
+### Addresses
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/ff1c6e96-ee73-4b5f-92ef-d5d53d9e7099)
+
 
 ## Optimizations Implemented
 ### Database Indexing
