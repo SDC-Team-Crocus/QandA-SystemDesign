@@ -64,19 +64,15 @@ Use the package manager [npm](https://docs.npmjs.com/) to install necessary depe
 npm install
 ```
 
-## Setup
+## Deployed API
 
-Repository requires a github token to access API data, as well as an AWS S3 bucket to handle hosting images. TinyURL is also used in order to manage S3 links. A .env file template is provided below.
+### Original Concept
+<img width="818" alt="Screenshot 2023-06-09 at 6 08 40 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/c59acc60-8145-4e49-87a1-1c289095c5e5">
 
-```bash
-API_KEY=Github API Token
-BUCKET_NAME=S3 Bucket Name
-BUCKET_REGION=S3 Region
-ACCESS_KEY=S3 Access Key
-SECRET_ACCESS_KEY=S3 Secret Access Key
-TINYURL_TOKEN=TinyURL API Token
-```
-## Team Members
+### Scaled API
+<img width="830" alt="Screenshot 2023-06-09 at 6 08 27 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/1ab1ef23-40eb-48d5-8a59-dcc9400904cc">
+
+## Contributors
 #### [Anthony Bui](https://www.linkedin.com/in/bui-anthony/) | [Github](https://github.com/aboowee)
 
 ## License
