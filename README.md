@@ -1,15 +1,16 @@
 # Question and Answers System Design
 
-Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. 
+Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. The focus of this project is to scale the API horizontally to optimize traffic load capabilities and upgrade the backend with minimal downtime during deployment.
 
 ## Table of Contents
 
-1. [Main Product Widgets](#Main-Product-Widgets)
-2. [Additional Components](#Additional-Components)
-3. [Installation](#Installation)
-4. [Setup](#Setup)
-5. [Team Members](#Team-members)
-6. [License](#License)
+1. [PostgreSQL Schema](#PostgreSQL-Schema)
+2. [API Routing](#API-Routing)
+3. [Redis Caching](#Redis-Caching)
+4. [Load Balancing](#Load-Balancing)
+5. [Setup](#Setup)
+6. [Contributors](#Contributors)
+7. [License](#License)
 
 ## Main Product Widgets
 
