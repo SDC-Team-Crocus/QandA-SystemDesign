@@ -8,13 +8,12 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
 2. [API Routing](#API-Routing)
-3. [Redis Caching](#Redis-Caching)
-4. [Load Balancing](#Load-Balancing)
-5. [Setup](#Setup)
-6. [Contributors](#Contributors)
-7. [License](#License)
+3. [Optimizations Implemented](#Optimizations-Implemented)
+4. [Setup](#Setup)
+5. [Contributors](#Contributors)
+6. [License](#License)
 
-## Main Product Widgets
+## PostgreSQL Schema
 
 ### Product Overview
 - Product overview consists of an image container, rating, category information, product name, product style options, size selection, quantity selection, add to cart button, favorite outfit button, and product description / features pulled from multiple API calls. 
@@ -22,38 +21,37 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 - A main image will be displayed with all other image options on the left depending on selected style. You can move forward and backwards of the image using the arrow buttons. The side image can be clicked to update the main image on screen. Side images display a max of 7 and if there are more, a down arrow can be toggled to see more. Selected main image will be shown on the side image bar.
 - <img width="500" alt="image" src="https://user-images.githubusercontent.com/106826710/230746975-d47b49ca-d5c0-46eb-9a93-c7ec844aaac8.png">
 - Clicking on the expand button on top right of the main image, the image container will display over the product information on the right side. Clicking on the image allows the user to zoom and move the mouse (2.5x scale) around the main image.
-- <img width="800" alt="image" src="https://user-images.githubusercontent.com/106826710/230747121-8feec311-9243-48a7-89a8-70b1cb649bed.png">
 
 
-### Related Products
--
-### Questions and Answers
--
-### Reviews and Ratings
-- Review List will contain all reviews for a given product. Can filter list via any selection within drop-down. Upon clicking More Reviews button, list will increment by two reviews with each click. If all reviews are shown, button will dissapear.
-
-- Rating Graph will show average rating with subsequent filled-in star value.
-- Each star rating bar is actionable, filtering the review list by the selected star rating
-- Characteristics from Reviews are shown below rating graph, mapped from a value of 1 to 5.
--  <img width="170" alt="Screenshot 2023-04-08 at 3 25 13 PM" src="https://user-images.githubusercontent.com/106470519/230739285-7a1ad887-a1bf-40be-993b-afafcfadc4e5.png"> <img width="170" alt="Screenshot 2023-04-08 at 3 28 12 PM" src="https://user-images.githubusercontent.com/106470519/230739392-0fba7190-adc7-47a8-bc75-871d3f7c0941.png">
-
-- Upon clicking on Add Review, a modal will popup where you can a new review can be added. Up to 5 images can be included with new reviews
-- <img width="383" alt="Screenshot 2023-04-08 at 3 34 50 PM" src="https://user-images.githubusercontent.com/106470519/230739650-8d7e80bb-7e41-473e-89a2-9d16c1716e12.png">
-
-## Additional Components
+## API Routing
 ### Shopping Cart
 - The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
 - <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
 
-### Navigation Bar
-- The navigation bar will show up on the top of all page paths. When the logo is clicked, the browser will redirect the user to the home page. The shopping cart will be accessible at anytime to send user to checkout page. 
-- <img width="1000" alt="image" src="https://user-images.githubusercontent.com/106826710/230748190-f25b6b05-06b8-4684-a006-414167005645.png">
+## Optimizations Implemented
+### Database Indexing
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
 
-### Checkout Page
-- Checkout page consists of 2 different containers. The right container consists of data saved on the local storage. Subtotals for quantity and individual costs are added up into a total ammount. On the left consists of a shipping and contact information, then moves into payment information before placing order. The user can return to the product page at any time.
-- <img width="700" alt="image" src="https://user-images.githubusercontent.com/106826710/230748933-47003ca4-1be4-4a87-b6e3-def1f432f020.png">
-- <img width="700" alt="image" src="https://user-images.githubusercontent.com/106826710/230748951-3a83e37d-ccba-4a79-82f2-0c7c5d119413.png">
+### PostgreSQL Refactoring
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
 
+### NGINX Load Balancing
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+
+### Redis Caching
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+
+### PM2 Clustering
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
+
+### Multi Server Deployment
+- The shopping cart works with product overview page. Items added to cart are saved to the client's local storage preventing unnecessary use of a cart API. Product meta data consist of image url, quantity, size, cost, product name and style name. Items can be removed from cart. Clicking on checkout button will utilize react router to send user to checkout page.
+- <img width="403" alt="image" src="https://user-images.githubusercontent.com/106826710/230747868-34745c20-8b2c-4bbe-bac6-d87ceb81c6fe.png">
 
 ## Installation
 
