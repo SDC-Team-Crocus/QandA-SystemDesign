@@ -2,6 +2,8 @@
 
 Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. The focus of this project is to scale the API horizontally to optimize traffic load capabilities and upgrade the backend with minimal downtime during deployment.
 
+Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balancing, PM2 Node Clustering, AWS EC2
+
 ## Table of Contents
 
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
@@ -74,10 +76,7 @@ SECRET_ACCESS_KEY=S3 Secret Access Key
 TINYURL_TOKEN=TinyURL API Token
 ```
 ## Team Members
-#### [Anthony Bui](https://www.linkedin.com/in/bui-anthony/) | [Github](https://github.com/aboowee) - Product Overview, Shopping Cart, Checkout Page, Navigation Bar, URL Pathing, Data Storage
-#### [Justin Cheng](https://www.linkedin.com/in/justin-cheng-4117b854/) | [Github](https://github.com/juchengca) - Home Page, Related Products, Your Outfit
-#### [Dylan Kahlstorf](https://www.linkedin.com/in/dylan-kahlstorf-3983ab241/) | [Github](https://github.com/kahlstorf1) - Reviews/Ratings, Interactions Logging, S3 Integration
-#### Nick Mann
+#### [Anthony Bui](https://www.linkedin.com/in/bui-anthony/) | [Github](https://github.com/aboowee)
 
 ## License
 
