@@ -15,12 +15,15 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 
 ## PostgreSQL Schema
 
-### Product Overview
+### Initial Design
 - Product overview consists of an image container, rating, category information, product name, product style options, size selection, quantity selection, add to cart button, favorite outfit button, and product description / features pulled from multiple API calls. 
-- <img width="800" alt="image" src="https://user-images.githubusercontent.com/106826710/230747225-0b7478c5-c472-4154-9ae5-aa3254a2c481.png">
-- A main image will be displayed with all other image options on the left depending on selected style. You can move forward and backwards of the image using the arrow buttons. The side image can be clicked to update the main image on screen. Side images display a max of 7 and if there are more, a down arrow can be toggled to see more. Selected main image will be shown on the side image bar.
-- <img width="500" alt="image" src="https://user-images.githubusercontent.com/106826710/230746975-d47b49ca-d5c0-46eb-9a93-c7ec844aaac8.png">
-- Clicking on the expand button on top right of the main image, the image container will display over the product information on the right side. Clicking on the image allows the user to zoom and move the mouse (2.5x scale) around the main image.
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/806aa448-64c3-4a49-89fd-8ee3164b3beb)
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/aac2bed2-62f1-4033-8982-794af4b90cc4)
+
+### Final Design
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/6f3a936b-7552-4824-bc8b-25a79bd24286)
+
+
 
 
 ## API Routing
