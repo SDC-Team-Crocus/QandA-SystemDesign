@@ -1,9 +1,9 @@
 # Question and Answers System Design
 
-Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. The focus of this project is to scale the API horizontally to optimize traffic load capabilities and upgrade the backend with minimal downtime during deployment.
+## Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. The focus of this project is to scale the API horizontally to optimize traffic load capabilities and upgrade the backend with minimal downtime during deployment.
 
-Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balancing, PM2 Node Clustering, AWS EC2
-Target: Create Microservice RESTful API and Scale to hit a response time of less than 2000 ms and 1% error rate
+## Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balancing, PM2 Node Clustering, AWS EC2
+## Target: Create Microservice RESTful API and Scale to hit a response time of less than 2000 ms and 1% error rate
 
 ## Table of Contents
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
