@@ -43,17 +43,17 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 ### NGINX Load Balancing
 - <img width="288" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3b82390a-aa14-461d-aa0a-7a8657179cf8">
 
-
 ### Redis Caching
 - <img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/47106067-a203-487f-8971-7e0a7afc5bb4">
 - <img width="939" alt="Screenshot 2023-05-25 at 7 02 24 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/2d84d925-c6bb-4922-a1db-20cc5ab4eea6">
 
-
 ### PM2 Clustering
-- 
+- <img width="940" alt="Screenshot 2023-05-25 at 6 45 21 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/571eebe8-830c-488a-ae64-d06b6f80aedb">
+<img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/8d33b484-73ee-4e69-b450-8d9774665cf9">
 
 ### Multi Server Deployment
-- 
+- <img width="1175" alt="Screenshot 2023-06-01 at 10 58 37 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/be27c16b-e04a-47d5-babf-92b450a099e3">
+
 
 ## Installation
 
@@ -62,10 +62,10 @@ Use the package manager [npm](https://docs.npmjs.com/) to install necessary depe
 ```bash
 npm install
 ```
-###Install the following necessary databases to your machine:
+### Install the following necessary databases to your machine:
 
-Documentation for PostgreSQL can be found [here](https://www.postgresql.org/download/).
-Documentation for Redis can be found [here](https://redis.io/download/#redis-downloads).
+- Documentation for PostgreSQL can be found [here](https://www.postgresql.org/download/).
+- Documentation for Redis can be found [here](https://redis.io/download/#redis-downloads).
 
 ## Deployed API
 
