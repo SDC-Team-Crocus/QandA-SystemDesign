@@ -36,7 +36,13 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3a7d07c5-3d90-4426-ba5b-9d6644c07d29)
 
 ### PostgreSQL Refactoring
-- 
+- <img width="930" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/82f81cd9-2224-4d55-ade3-1215860c33cd">
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3e4c32a1-30d0-4c0d-b0cf-2b3f6045f23b)
+
+- <img width="930" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/82f81cd9-2224-4d55-ade3-1215860c33cd">
+- ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/f3dbd2a4-2197-49d7-bdbd-8cf0b6e697c8)
+
+- <img width="930" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/82f81cd9-2224-4d55-ade3-1215860c33cd">
 
 ### NGINX Load Balancing
 - 
