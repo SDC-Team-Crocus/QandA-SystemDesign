@@ -59,7 +59,7 @@
 - <img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/8d33b484-73ee-4e69-b450-8d9774665cf9">
 
 ### Multi Server Deployment
-- Final Threshold of Scaled API. Meeting criteria of less than 2000 ms response time and 1% error rate.
+- Final Threshold of Scaled API. Meeting criteria of less than 2000 ms response time and 1% error rate at 3500 requests/second
 - <img width="1175" alt="Screenshot 2023-06-01 at 10 58 37 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/be27c16b-e04a-47d5-babf-92b450a099e3">
 
 
