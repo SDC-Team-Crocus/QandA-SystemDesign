@@ -3,6 +3,7 @@
 Backend project to convert a monolithic E-Commerce API into separate Microservices. This repository is focused on isolating the Questions and Answers of each shopping item into it's own RESTful API. The focus of this project is to scale the API horizontally to optimize traffic load capabilities and upgrade the backend with minimal downtime during deployment.
 
 Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balancing, PM2 Node Clustering, AWS EC2
+Target: Create Microservice RESTful API and Scale to hit a response time of less than 2000 ms and 1% error rate
 
 ## Table of Contents
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
@@ -38,21 +39,27 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 
 ### PostgreSQL Refactoring
 - <img width="930" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/82f81cd9-2224-4d55-ade3-1215860c33cd">
+- Original threshold of 1500 requests/second utilizing JavaScript to format JSON data and make calls to database.
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3e4c32a1-30d0-4c0d-b0cf-2b3f6045f23b)
+- Due to high time complexity JavaScript for loops, utilized PostgreSQL querying due to native C speed outperforming JavaScript. PostgreSQL also had JSON formatting capabilities. Increased to 5000 requests/second.
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/f3dbd2a4-2197-49d7-bdbd-8cf0b6e697c8)
 
 ### NGINX Load Balancing
 - <img width="288" alt="image" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/3b82390a-aa14-461d-aa0a-7a8657179cf8">
 
 ### Redis Caching
+- Original Benchmark without Redis Caching stress tested through Loader.io
 - <img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/47106067-a203-487f-8971-7e0a7afc5bb4">
+- Redis Caching implemented. Load tested with repeating product id to guarantee O(1) time complexity for GET requests. 25% latency speed increase.
 - <img width="939" alt="Screenshot 2023-05-25 at 7 02 24 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/2d84d925-c6bb-4922-a1db-20cc5ab4eea6">
 
 ### PM2 Clustering
+- EC2 T2.micro comparison. No noticeable speed increase due to 1 physical core count. Clustering will not have an effect unless there are multiple threads.
 - <img width="940" alt="Screenshot 2023-05-25 at 6 45 21 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/571eebe8-830c-488a-ae64-d06b6f80aedb">
-<img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/8d33b484-73ee-4e69-b450-8d9774665cf9">
+- <img width="935" alt="Screenshot 2023-05-25 at 6 47 33 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/8d33b484-73ee-4e69-b450-8d9774665cf9">
 
 ### Multi Server Deployment
+- Final Threshold of Scaled API. Meeting criteria of less than 2000 ms response time and 1% error rate.
 - <img width="1175" alt="Screenshot 2023-06-01 at 10 58 37 PM" src="https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/be27c16b-e04a-47d5-babf-92b450a099e3">
 
 
