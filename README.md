@@ -5,7 +5,6 @@ Backend project to convert a monolithic E-Commerce API into separate Microservic
 Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balancing, PM2 Node Clustering, AWS EC2
 
 ## Table of Contents
-
 1. [PostgreSQL Schema](#PostgreSQL-Schema)
 2. [API Routing](#API-Routing)
 3. [Optimizations Implemented](#Optimizations-Implemented)
@@ -17,13 +16,15 @@ Tech Stack Implemented: Node.js, Express.js, PostgreSQL, Redis, NGINX Load Balan
 ## PostgreSQL Schema
 
 ### Initial Design
-- Product overview consists of an image container, rating, category information, product name, product style options, size selection, quantity selection, add to cart button, favorite outfit button, and product description / features pulled from multiple API calls. 
+- Initial API contained CSV data for 3 Tables (Questions, Answers, Photos)
+#### Schema for RDBMS
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/806aa448-64c3-4a49-89fd-8ee3164b3beb)
+#### Data Models for NoSQL
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/aac2bed2-62f1-4033-8982-794af4b90cc4)
 
 ### Final Design
+- Although both options are viable options, due to the fact that the data being worked with has been structured from working with the previous Atelier API, new data types are not expected and any foreseeable future changes is highly unlikely. Normalizing the data would allow querying to be "easier" in a sense that the data is organized in specific tables. Larger community base allows for debugging and finding solutions at a quicker rate. PostgreSQL is currently touted as the most installed database on Node Package Manager (NPM). Query speed does not seem to be a concern due to the data being simplistic. Although within current widget (Questions and Answers), ACID compliance is not of concern, in general for an E-Commerce site which includes transactions, using a standardized database throughout would make this simpler.
 - ![image](https://github.com/SDC-Team-Crocus/QandA-SystemDesign/assets/106826710/6f3a936b-7552-4824-bc8b-25a79bd24286)
-
 
 ## API Routing
 ### Addresses
